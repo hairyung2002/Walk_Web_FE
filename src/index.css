@@ -40,28 +40,47 @@
   font-display: swap;
 }
 
-@theme {
-  --color-primary: #2979ff;
-  --color-primary-hover: #1565d8;
-  --color-primary-pressed: #0d47a1;
-  --color-primary-blue: #55bbff;
-  --color-secondary: #e3eeff;
-  --color-secondary-pressed: #c9e2ff;
-  --color-white: #fffefb;
-  --color-text-on-white: #121212;
-  --color-white-stroke: #cccccc;
-  --color-background: #f5f5f5;
-  --color-text-on-background: #999898;
-  --color-overlay: #121212, rgba(18, 18, 18, 0.4);
-  --color-rating-active: #ffb400;
-  --color-alert: #e90000;
+:root {
+  /* Primary Colors - 더 어두운 초록색 계열 */
+  --color-primary: #064e3b;
+  --color-primary-hover: #047857;
+  --color-primary-light: #059669;
+  --color-secondary: #065f46;
+  --color-secondary-hover: #0d9488;
+  --color-accent: #10b981;
+  --color-accent-hover: #34d399;
 
-  --background-image-primary-gradient: linear-gradient(207deg, #2979ff 17.05%, #5bf 107.21%);
+  /* Background Colors */
+  --color-bg-primary: #0a0f0a;
+  --color-bg-secondary: #0f1b14;
+  --color-bg-tertiary: #1a2e23;
+  --color-bg-surface: #22543d;
+  --color-bg-elevated: #2d4a3e;
 
-  --shadow-button: 0px 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-button-hover: 0px 4px 8px rgba(0, 0, 0, 0.12);
-  --shadow-primary: 2px 2px 30px rgba(0, 0, 0, 0.25);
-  --inset-shadow-inner: inset 0px 2px 4px rgba(0, 0, 0, 0.5);
+  /* Text Colors */
+  --color-text-primary: #f7fafc;
+  --color-text-secondary: #e2e8f0;
+  --color-text-muted: #a0aec0;
+  --color-text-disabled: #718096;
+
+  /* Success/Error Colors */
+  --color-success: #10b981;
+  --color-success-light: #6ee7b7;
+  --color-error: #f56565;
+  --color-error-light: #fed7d7;
+  --color-warning: #ed8936;
+  --color-warning-light: #fbd38d;
+
+  /* Border Colors */
+  --color-border: #2d3748;
+  --color-border-light: #4a5568;
+  --color-border-focus: #10b981;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 @layer base {
@@ -75,4 +94,31 @@
   button {
     cursor: pointer;
   }
+}
+
+/* Floating Animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes float-delay {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delay {
+  animation: float-delay 4s ease-in-out infinite 2s;
 }
