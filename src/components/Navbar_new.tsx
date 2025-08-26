@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { LogoIcon, NotificationIcon, MenuIcon, ProfileIcon, SettingsIcon, LogoutIcon } from './icons';
 
 const Navbar = () => {

@@ -20,7 +20,6 @@ interface Review {
 
 const CommunityPage = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('community');
   const [selectedFilter, setSelectedFilter] = useState('recent');
 
   const reviews: Review[] = [
@@ -256,7 +255,7 @@ const CommunityPage = () => {
         </svg>
       </button>
 
-      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      <TabBar onTabChange={() => {}} />
     </div>
   );
 };

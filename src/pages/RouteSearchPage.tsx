@@ -14,7 +14,6 @@ interface SearchFilters {
 
 const RouteSearchPage = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('search');
   const [filters, setFilters] = useState<SearchFilters>({
     location: '',
     distance: 'all',
@@ -356,7 +355,7 @@ const RouteSearchPage = () => {
         )}
       </div>
 
-      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      <TabBar onTabChange={() => {}} />
     </div>
   );
 };

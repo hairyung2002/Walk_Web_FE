@@ -1,10 +1,5 @@
-import React, { useState } from 'react';
-import LogoIcon from '../assets/icons/logo.svg?react';
-import NotificationIcon from '../assets/icons/notification.svg?react';
-import MenuIcon from '../assets/icons/menu.svg?react';
-import ProfileIcon from '../assets/icons/profile.svg?react';
-import SettingsIcon from '../assets/icons/settings.svg?react';
-import LogoutIcon from '../assets/icons/logout.svg?react';
+import { useState } from 'react';
+import { LogoIcon, NotificationIcon } from './icons';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

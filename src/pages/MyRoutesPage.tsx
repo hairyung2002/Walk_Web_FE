@@ -20,7 +20,6 @@ interface SavedRoute {
 
 const MyRoutesPage = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('routes');
   const [selectedFilter, setSelectedFilter] = useState('recent');
 
   const savedRoutes: SavedRoute[] = [
@@ -320,7 +319,7 @@ const MyRoutesPage = () => {
         <div className="h-6"></div>
       </div>
 
-      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      <TabBar onTabChange={() => {}} />
     </div>
   );
 };

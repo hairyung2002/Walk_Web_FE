@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
@@ -31,7 +31,7 @@ const RouteRecommendationPage = () => {
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 회의록에 맞는 4가지 추천 경로
+  // 4가지 추천 경로 더미 데이터
   const recommendations: RouteRecommendation[] = [
     {
       id: 'urban',

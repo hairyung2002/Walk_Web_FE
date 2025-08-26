@@ -1,12 +1,10 @@
-import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 interface TabBarProps {
-  activeTab: string;
   onTabChange: (tab: string) => void;
 }
 
-const TabBar: React.FC<TabBarProps> = ({ activeTab, onTabChange }) => {
+const TabBar: React.FC<TabBarProps> = ({ onTabChange }) => {
   const navigate = useNavigate();
   const location = useLocation();
 

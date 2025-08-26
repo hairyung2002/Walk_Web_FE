@@ -1,22 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import TabBar from '../../components/TabBar';
-import { 
-  SearchIcon, 
-  MapPinIcon, 
-  ClockIcon, 
-  StarIcon,
-  EyeIcon,
-  HeartIcon
-} from '../../components/icons';
 
 const MainPage = () => {
   const [location, setLocation] = useState('');
   const [walkTime, setWalkTime] = useState('30');
   const [walkPurpose, setWalkPurpose] = useState('');
   const [withPet, setWithPet] = useState(false);
-  const [activeTab, setActiveTab] = useState('home');
   const navigate = useNavigate();
 
   // 날씨 상태 (예시)
@@ -238,7 +229,7 @@ const MainPage = () => {
       </div>
 
       {/* TabBar */}
-      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      <TabBar onTabChange={() => {}} />
     </div>
   );
 };
