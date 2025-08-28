@@ -1,32 +1,73 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import TabBar from '../../components/TabBar';
 import { isLoggedIn } from '../../utils/auth';
 import useGetWeather from '@/hooks/query/Mainpage/useGetWheatehr';
+import useGetAddress from '@/hooks/query/Mainpage/useGetAddress';
 
 const MainPage = () => {
+  // 기본 상태 관리
   const [location, setLocation] = useState('');
   const [walkTime, setWalkTime] = useState('30');
   const [walkPurpose, setWalkPurpose] = useState('');
   const [withPet, setWithPet] = useState(false);
+
+  // 위치 정보 상태
+  const [currentCoords, setCurrentCoords] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [isLocationLoading, setIsLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+
   const navigate = useNavigate();
 
   const { data: weatherData } = useGetWeather();
 
-  // 날씨 상태 (예시)
+  // 백엔드에서 주소 가져오기 (좌표 기반)
+  const {
+    data: addressData,
+    isLoading: isAddressLoading,
+    error: addressError,
+  } = useGetAddress({
+    latitude: currentCoords?.latitude,
+    longitude: currentCoords?.longitude,
+    enabled: !!currentCoords,
+  });
+
+  const [weatherMention, setWeatherMention] = useState<string>('산책하기 좋은 날씨입니다!');
+  const [weatherColor, setWeatherColor] = useState<'Green' | 'Red' | 'Blue' | 'Gray' | 'White'>('Green');
+
+  useEffect(() => {
+    if (weatherData && weatherData.temperature > 33.0) {
+      setWeatherMention('날씨가 매우 더워요! 가벼운 옷차림과 충분한 수분 섭취를 잊지 마세요.');
+      setWeatherColor('Red');
+    } else if (weatherData && weatherData.temperature < -10.0) {
+      setWeatherMention('날씨가 매우 추워요! 따뜻한 옷차림과 외출 시 주의하세요.');
+      setWeatherColor('Blue');
+    } else if (weatherData && weatherData.precipitationType === 'rain') {
+      setWeatherMention('비가 오고 있어요! 우산을 챙기세요.');
+      setWeatherColor('Gray');
+    } else if (weatherData && weatherData.precipitationType === 'snow') {
+      setWeatherMention('눈이 오고 있어요! 따뜻한 옷차림과 안전에 유의하세요.');
+      setWeatherColor('White');
+    } else if (weatherData) {
+      setWeatherMention('산책하기 좋은 날씨입니다!');
+      setWeatherColor('Green');
+    }
+  }, [weatherData]);
+
+  // 날씨 관리
   const weatherInfo = {
     temp: weatherData?.temperature || 0,
     condition: weatherData?.precipitationType || 'unknown',
-    pm: 'good',
-    recommendation: '산책하기 좋은 날씨입니다!',
+    recommendation: weatherMention,
+    color: weatherColor,
   };
 
   // 추천 경로 타입
   const walkPurposes = [
     { id: 'urban', label: '도심 산책', icon: '🏙️', desc: '음식점, 카페가 많은 활기찬 코스' },
     { id: 'peaceful', label: '조용한 산책', icon: '🌿', desc: '수목이 많고 한적한 힐링 코스' },
-    { id: 'moving', label: '이동 겸 산책', icon: '🚶', desc: '목적지까지 효율적인 경로' },
+    { id: 'night', label: '야경 산책', icon: '🌃', desc: '아름다운 야경을 감상할 수 있는 코스' },
     { id: 'scenic', label: '경치 좋은 길', icon: '📸', desc: '사진 찍기 좋은 명소 코스' },
   ];
 
@@ -36,6 +77,54 @@ const MainPage = () => {
     { value: '45', label: '45분' },
     { value: '60', label: '1시간' },
   ];
+
+  // 현재 위치 가져오기 함수 (브라우저 GPS + 백엔드 주소 변환)
+  const handleGetCurrentLocation = async () => {
+    setIsLocationLoading(true);
+    setLocationError(null);
+
+    try {
+      // 브라우저 GPS로 위도/경도 가져오기
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        if (!navigator.geolocation) {
+          reject(new Error('브라우저에서 위치 서비스를 지원하지 않습니다.'));
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000,
+        });
+      });
+
+      const { latitude, longitude } = position.coords;
+      console.log('📍 현재 위치:', { latitude, longitude });
+
+      // 좌표 상태 업데이트 (이후 useGetAddress가 자동으로 호출됨)
+      setCurrentCoords({ latitude, longitude });
+    } catch (error) {
+      console.error('위치 가져오기 실패:', error);
+      setLocationError('현재 위치를 가져올 수 없습니다. 직접 주소를 입력해주세요.');
+    } finally {
+      setIsLocationLoading(false);
+    }
+  };
+
+  // 사용자가 직접 주소를 입력할 때
+  const handleAddressInputChange = (value: string) => {
+    setLocation(value);
+    // 사용자가 직접 입력한 경우 좌표 정보 초기화
+    setCurrentCoords(null);
+  };
+
+  // 백엔드에서 주소를 가져왔을 때 location 상태 업데이트
+  useEffect(() => {
+    if (addressData?.addressJibun && currentCoords) {
+      setLocation(addressData.addressJibun);
+      console.log('🏠 백엔드에서 받은 주소:', addressData.addressJibun);
+    }
+  }, [addressData, currentCoords]);
 
   const handleRouteRecommendation = () => {
     // 로그인 체크
@@ -48,8 +137,23 @@ const MainPage = () => {
       alert('출발지와 산책 목적을 선택해주세요!');
       return;
     }
+
+    // 주소 유형 결정 (GPS 기반인지 사용자 입력인지)
+    const addressType = currentCoords ? 'gps' : 'manual';
+
     navigate('/route-recommendation', {
-      state: { location, walkTime, walkPurpose, withPet },
+      state: {
+        location,
+        walkTime,
+        walkPurpose,
+        withPet,
+        addressInfo: {
+          address: location,
+          coordinates: currentCoords,
+          addressType,
+          backendAddressData: addressData,
+        },
+      },
     });
   };
 
@@ -71,16 +175,40 @@ const MainPage = () => {
           </div>
 
           {/* Weather Card */}
-          <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6 text-white">
+          <div
+            className={`rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6 text-white bg-opacity-80 ${
+              weatherInfo.color === 'Red'
+                ? 'bg-gradient-to-r from-red-700/80 to-red-900/80'
+                : weatherInfo.color === 'Blue'
+                  ? 'bg-gradient-to-r from-blue-700/80 to-blue-900/80'
+                  : weatherInfo.color === 'Gray'
+                    ? 'bg-gradient-to-r from-gray-700/80 to-gray-900/80'
+                    : weatherInfo.color === 'White'
+                      ? 'bg-gradient-to-r from-gray-200/80 to-gray-400/80 text-gray-800'
+                      : 'bg-gradient-to-r from-green-700/80 to-green-900/80'
+            }`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm opacity-90">현재 날씨</p>
+                <p className={`text-xs sm:text-sm ${weatherInfo.color === 'White' ? 'opacity-70' : 'opacity-90'}`}>
+                  현재 날씨
+                </p>
                 <p className="text-xl sm:text-2xl font-bold">{weatherInfo.temp}°C</p>
-                <p className="text-xs sm:text-sm opacity-90">{weatherInfo.recommendation}</p>
+                <p className={`text-xs sm:text-sm ${weatherInfo.color === 'White' ? 'opacity-70' : 'opacity-90'}`}>
+                  {weatherInfo.recommendation}
+                </p>
               </div>
               <div className="text-right">
-                <div className="text-2xl sm:text-3xl mb-1">☀️</div>
-                <p className="text-xs opacity-90">미세먼지: 좋음</p>
+                <div className="text-2xl sm:text-3xl mb-1">
+                  {weatherInfo.color === 'Red'
+                    ? '🔥'
+                    : weatherInfo.color === 'Blue'
+                      ? '🥶'
+                      : weatherInfo.color === 'Gray'
+                        ? '🌧️'
+                        : weatherInfo.color === 'White'
+                          ? '❄️'
+                          : '☀️'}
+                </div>
               </div>
             </div>
           </div>
@@ -94,19 +222,32 @@ const MainPage = () => {
                 placeholder="현재 위치 또는 출발지를 입력하세요"
                 className="w-full px-3 py-3 sm:px-4 sm:py-4 bg-gray-800 border border-gray-700 rounded-xl sm:rounded-2xl text-white placeholder-gray-500 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all text-sm sm:text-base"
                 value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                onChange={(e) => handleAddressInputChange(e.target.value)}
               />
-              <button className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 bg-green-600 text-white p-1.5 sm:p-2 rounded-lg sm:rounded-xl">
-                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                </svg>
+              <button
+                title="현재 위치 가져오기"
+                aria-label="현재 위치 가져오기"
+                disabled={isLocationLoading}
+                className={`absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 bg-green-600 text-white p-1.5 sm:p-2 rounded-lg sm:rounded-xl transition-all ${
+                  isLocationLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-700'
+                }`}
+                onClick={handleGetCurrentLocation}>
+                {isLocationLoading ? (
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                  </svg>
+                )}
               </button>
             </div>
+            {/* Location Error Message */}
+            {locationError && <p className="mt-2 text-xs sm:text-sm text-red-400">{locationError}</p>}
           </div>
 
           {/* Walk Time Selection */}

@@ -4,7 +4,7 @@ import { getWeather } from '@/apis/Mainpage/weather';
 import type { Weather } from '@/types/weather';
 
 function useGetWeather() {
-  return useQuery<Weather[]>({
+  return useQuery<Weather>({
     queryKey: [QUERY_KEY.weather],
     queryFn: () => getWeather(),
     staleTime: 1000 * 6 * 5,

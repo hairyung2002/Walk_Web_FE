@@ -3,6 +3,7 @@ import './App.css';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RouterProvider } from 'react-router-dom';
 import { router } from '@routes/pageRoutes';
+import 'leaflet/dist/leaflet.css';
 
 const queryClient = new QueryClient();
 

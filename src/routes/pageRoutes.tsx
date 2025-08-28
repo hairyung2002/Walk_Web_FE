@@ -18,6 +18,10 @@ export const publicRoutes: RouteObject[] = [
     path: '/signup',
     element: <lazyRoutes.SignUpPage />,
   },
+  {
+    path: '/tmap-test',
+    element: <lazyRoutes.TmapTest />,
+  },
 ];
 
 export const protectedRoutes: RouteObject[] = [
@@ -49,6 +53,10 @@ export const protectedRoutes: RouteObject[] = [
         path: '/my-info',
         element: <lazyRoutes.MyInfoPage />,
       },
+      {
+        path: '/navigate',
+        element: <lazyRoutes.NavigatePage />,
+      }
     ],
   },
 ];

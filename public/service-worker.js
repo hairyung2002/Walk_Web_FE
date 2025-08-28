@@ -25,15 +25,18 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 요청: 요청이 들어오면 캐시 먼저 확인, 없으면 네트워크에서
 self.addEventListener('fetch', (event) => {
+  const url = event.request.url;
+
+  // 카카오맵 API는 캐싱하지 않고 네트워크로 바로 전달
+  if (url.includes('dapi.kakao.com') || url.includes('kakao')) {
+    return;
+  }
+
+  // 기본 캐싱 로직
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        console.log('[SW] Serving from cache:', event.request.url);
-        return cachedResponse;
-      }
-      return fetch(event.request);
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
     }),
   );
 });

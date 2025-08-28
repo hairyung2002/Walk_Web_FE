@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-map API 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #mapDiv {
+            width: 100%;
+            height: 400px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .log {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>T-map JavaScript API v2 테스트</h1>
+        
+        <div>
+            <button class="button" onclick="loadTmapAPI()">T-map API 로드</button>
+            <button class="button" onclick="createMap()">지도 생성</button>
+            <button class="button" onclick="clearLog()">로그 지우기</button>
+        </div>
+        
+        <div id="mapDiv"></div>
+        
+        <div class="log" id="logDiv">로그가 여기에 표시됩니다...\n</div>
+    </div>
+
+    <script>
+        const API_KEY = 'bozGB4KHwEa9pvFOm5Q4Z3A78JBt5KXL58U7Ph4X';
+        let tmapInstance = null;
+        
+        function log(message) {
+            const logDiv = document.getElementById('logDiv');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+        
+        function clearLog() {
+            document.getElementById('logDiv').textContent = '';
+        }
+        
+        function loadTmapAPI() {
+            log('T-map API 로딩 시작...');
+            
+            // 기존 스크립트 제거
+            const existingScript = document.querySelector('script[src*="apis.openapi.sk.com"]');
+            if (existingScript) {
+                existingScript.remove();
+                log('기존 T-map 스크립트 제거됨');
+            }
+            
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = `https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=${API_KEY}`;
+            
+            script.onload = function() {
+                log('✅ T-map 스크립트 로드 완료');
+                log(`API 키: ${API_KEY}`);
+                log(`스크립트 URL: ${script.src}`);
+                
+                setTimeout(() => {
+                    checkTmapObjects();
+                }, 2000);
+            };
+            
+            script.onerror = function(error) {
+                log('❌ T-map 스크립트 로드 실패: ' + error);
+            };
+            
+            document.head.appendChild(script);
+            log('T-map 스크립트 추가됨');
+        }
+        
+        function checkTmapObjects() {
+            log('=== T-map 객체 상태 확인 ===');
+            
+            if (typeof window.Tmapv2 !== 'undefined') {
+                log('✅ window.Tmapv2 존재함');
+                log('타입: ' + typeof window.Tmapv2);
+                log('속성들: ' + Object.keys(window.Tmapv2).join(', '));
+                log('모든 속성들: ' + Object.getOwnPropertyNames(window.Tmapv2).join(', '));
+                
+                // 각 속성 상세 확인
+                Object.getOwnPropertyNames(window.Tmapv2).forEach(prop => {
+                    const value = window.Tmapv2[prop];
+                    log(`  ${prop}: ${typeof value} ${typeof value === 'function' ? '(함수)' : ''}`);
+                });
+                
+                // 주요 클래스들 확인
+                log('=== 주요 클래스 확인 ===');
+                log('Map 클래스: ' + (window.Tmapv2.Map ? '사용 가능' : '없음'));
+                log('LatLng 클래스: ' + (window.Tmapv2.LatLng ? '사용 가능' : '없음'));
+                log('Marker 클래스: ' + (window.Tmapv2.Marker ? '사용 가능' : '없음'));
+                
+            } else {
+                log('❌ window.Tmapv2가 존재하지 않음');
+            }
+        }
+        
+        function createMap() {
+            log('=== 지도 생성 시도 ===');
+            
+            if (!window.Tmapv2) {
+                log('❌ T-map API가 로드되지 않았습니다');
+                return;
+            }
+            
+            if (!window.Tmapv2.Map) {
+                log('❌ Map 클래스가 없습니다');
+                return;
+            }
+            
+            if (!window.Tmapv2.LatLng) {
+                log('❌ LatLng 클래스가 없습니다');
+                return;
+            }
+            
+            try {
+                // 서울 시청 좌표
+                const center = new window.Tmapv2.LatLng(37.5665, 126.978);
+                log('✅ LatLng 객체 생성 성공: ' + center);
+                
+                tmapInstance = new window.Tmapv2.Map('mapDiv', {
+                    center: center,
+                    width: '100%',
+                    height: '400px',
+                    zoom: 15,
+                    zoomControl: true,
+                    scrollwheel: true
+                });
+                
+                log('✅ 지도 생성 성공!');
+                log('지도 인스턴스: ' + tmapInstance);
+                
+                // 마커 추가 테스트
+                const marker = new window.Tmapv2.Marker({
+                    position: center,
+                    icon: 'https://tmapapis.sktelecom.com/upload/tmap/marker/pin_r_m_s.png',
+                    title: '서울 시청',
+                    map: tmapInstance
+                });
+                
+                log('✅ 마커 추가 성공!');
+                
+            } catch (error) {
+                log('❌ 지도 생성 실패: ' + error.message);
+                log('Error: ' + error);
+            }
+        }
+        
+        // 페이지 로드 시 자동으로 API 로드
+        window.onload = function() {
+            log('페이지 로드 완료');
+            setTimeout(loadTmapAPI, 1000);
+        };
+    </script>
+</body>
+</html>

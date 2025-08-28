@@ -11,4 +11,5 @@ export const lazyRoutes = {
   CommunityPage: React.lazy(() => import('../pages/CommunityPage')),
   MyRoutesPage: React.lazy(() => import('../pages/MyRoutesPage')),
   RouteSearchPage: React.lazy(() => import('../pages/RouteSearchPage')),
+  NavigatePage: React.lazy(() => import('../pages/NavigatePage/NavigatePage')),
 };

@@ -10,9 +10,37 @@
     <meta name="apple-mobile-web-app-title" content="ITDA" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WalkingCity</title>
+    
+    <!-- Service Worker 및 캐시 초기화 스크립트 -->
+    <script>
+      // Service Worker 완전 초기화
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+            console.log('Service Worker 제거됨:', registration);
+          }
+        });
+      }
+      
+      // 모든 캐시 삭제
+      if ('caches' in window) {
+        caches.keys().then(function(names) {
+          names.forEach(function(name) {
+            caches.delete(name);
+            console.log('캐시 삭제됨:', name);
+          });
+        });
+      }
+      
+      console.log('🧹 Service Worker 및 캐시 초기화 완료');
+    </script>
+    <script type="text/javascript" src="https://apis.openapi.sk.com/tmap/jsv3?version=1&appKey=bozGB4KHwEa9pvFOm5Q4Z3A78JBt5KXL58U7Ph4X"></script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script src="https://apis.openapi.sk.com/tmap/jsv3?version=1&appKey=bozGB4KHwEa9pvFOm5Q4Z3A78JBt5KXL58U7Ph4X"></script>
+
   </body>
 </html>
