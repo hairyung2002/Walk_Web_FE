@@ -1,37 +1,49 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LogoIcon, NotificationIcon } from './icons';
+import { logout, getUser } from '../utils/auth';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const user = getUser();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-b border-emerald-100 shadow-sm">
-      <div className="max-w-md mx-auto px-4">
-        <div className="flex justify-between items-center h-14">
+      <div className="max-w-sm sm:max-w-md mx-auto px-3 sm:px-4">
+        <div className="flex justify-between items-center h-12 sm:h-14">
           {/* Logo */}
           <div className="flex items-center">
-            <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mr-3 shadow-md">
-              <LogoIcon className="w-5 h-5 text-white" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg sm:rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-md">
+              <LogoIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <span className="text-lg font-bold text-gray-800">WalkingCity</span>
+            <span className="text-base sm:text-lg font-bold text-gray-800">WalkingCity</span>
           </div>
 
           {/* Right Side - Menu & Notifications */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1 sm:space-x-2">
             {/* Notifications */}
-            <button className="text-gray-600 hover:text-emerald-600 p-2 rounded-xl hover:bg-emerald-50 transition-all duration-200 relative">
-              <NotificationIcon className="w-5 h-5" />
+            <button 
+              title="알림"
+              className="text-gray-600 hover:text-emerald-600 p-1.5 sm:p-2 rounded-lg sm:rounded-xl hover:bg-emerald-50 transition-all duration-200 relative">
+              <NotificationIcon className="w-4 h-4 sm:w-5 sm:h-5" />
               {/* 알림 수 표시 컴포넌트*/}
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 text-white text-xs rounded-full flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 w-3 h-3 sm:w-4 sm:h-4 bg-emerald-500 text-white text-xs rounded-full flex items-center justify-center">
                 2
               </span>
             </button>
 
             {/* Menu Button */}
             <button
+              title="메뉴"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-600 hover:text-emerald-600 p-2 rounded-xl hover:bg-emerald-50 transition-all duration-200">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              className="text-gray-600 hover:text-emerald-600 p-1.5 sm:p-2 rounded-lg sm:rounded-xl hover:bg-emerald-50 transition-all duration-200">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
@@ -40,10 +52,10 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="absolute left-0 right-0 top-14 bg-white/95 backdrop-blur-lg border-b border-emerald-100 shadow-lg">
-            <div className="px-4 py-3 space-y-1">
-              <button className="w-full text-left px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition-all duration-200 flex items-center">
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="absolute left-0 right-0 top-12 sm:top-14 bg-white/95 backdrop-blur-lg border-b border-emerald-100 shadow-lg">
+            <div className="px-3 sm:px-4 py-2 sm:py-3 space-y-1">
+              <button className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition-all duration-200 flex items-center text-sm sm:text-base">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -53,8 +65,8 @@ const Navbar = () => {
                 </svg>
                 내 프로필
               </button>
-              <button className="w-full text-left px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition-all duration-200 flex items-center">
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition-all duration-200 flex items-center text-sm sm:text-base">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -71,7 +83,10 @@ const Navbar = () => {
                 설정
               </button>
               <hr className="my-2 border-emerald-100" />
-              <button className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 flex items-center">
+              <button 
+                className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 flex items-center"
+                onClick={handleLogout}
+              >
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"

@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { isLoggedIn } from '../utils/auth';
 
 interface TabBarProps {
   onTabChange: (tab: string) => void;
@@ -14,7 +15,7 @@ const TabBar: React.FC<TabBarProps> = ({ onTabChange }) => {
       label: '홈',
       path: '/',
       icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -29,7 +30,7 @@ const TabBar: React.FC<TabBarProps> = ({ onTabChange }) => {
       label: '산책로 찾기',
       path: '/route-search',
       icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -44,7 +45,7 @@ const TabBar: React.FC<TabBarProps> = ({ onTabChange }) => {
       label: '내 경로',
       path: '/my-routes',
       icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -59,7 +60,7 @@ const TabBar: React.FC<TabBarProps> = ({ onTabChange }) => {
       label: '커뮤니티',
       path: '/community',
       icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -78,7 +79,13 @@ const TabBar: React.FC<TabBarProps> = ({ onTabChange }) => {
     return currentTab ? currentTab.id : 'home';
   };
 
-  const handleTabClick = (tab: typeof tabs[0]) => {
+  const handleTabClick = (tab: (typeof tabs)[0]) => {
+    // 홈 페이지가 아닌 경우 로그인 체크
+    if (tab.path !== '/' && !isLoggedIn()) {
+      navigate('/login');
+      return;
+    }
+    
     onTabChange(tab.id);
     navigate(tab.path);
   };
@@ -87,18 +94,17 @@ const TabBar: React.FC<TabBarProps> = ({ onTabChange }) => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 z-50">
-      <div className="flex items-center justify-around py-2 px-4 max-w-md mx-auto">
+      <div className="flex items-center justify-around py-1.5 sm:py-2 px-2 sm:px-4 max-w-sm sm:max-w-md mx-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => handleTabClick(tab)}
-            className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-all duration-200 ${
+            className={`flex flex-col items-center justify-center py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg transition-all duration-200 ${
               currentActiveTab === tab.id
                 ? 'text-green-400 bg-gray-700'
                 : 'text-gray-400 hover:text-green-400 hover:bg-gray-700'
-            }`}
-          >
-            <div className="mb-1">{tab.icon}</div>
+            }`}>
+            <div className="mb-0.5 sm:mb-1">{tab.icon}</div>
             <span className="text-xs font-medium">{tab.label}</span>
           </button>
         ))}
