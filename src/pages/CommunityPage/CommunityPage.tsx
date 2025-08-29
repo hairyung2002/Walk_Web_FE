@@ -20,14 +20,7 @@ const CommunityPage: React.FC = () => {
     my: showMyReviews,
   };
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError,
-  } = useGetReviews(queryParams);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } = useGetReviews(queryParams);
 
   // 모든 리뷰 데이터를 하나의 배열로 평탄화
   const allReviews = data?.pages.flatMap((page) => page.content) || [];
@@ -66,11 +59,8 @@ const CommunityPage: React.FC = () => {
           <button
             onClick={() => setShowMyReviews(!showMyReviews)}
             className={`w-full py-2.5 px-4 rounded-xl text-sm font-medium transition-all ${
-              showMyReviews
-                ? 'bg-green-500 text-white'
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-            }`}
-          >
+              showMyReviews ? 'bg-green-500 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}>
             {showMyReviews ? '전체 리뷰 보기' : '내가 쓴 리뷰만 보기'}
           </button>
         </div>
@@ -86,8 +76,7 @@ const CommunityPage: React.FC = () => {
                   selectedFilter === option.id
                     ? 'bg-green-500 text-white'
                     : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
-              >
+                }`}>
                 {option.label}
               </button>
             ))}
@@ -98,9 +87,7 @@ const CommunityPage: React.FC = () => {
         <div className="px-4 space-y-3">
           {isLoading ? (
             // 스켈레톤 UI 표시
-            Array.from({ length: 3 }).map((_, index) => (
-              <ReviewSkeleton key={index} />
-            ))
+            Array.from({ length: 3 }).map((_, index) => <ReviewSkeleton key={index} />)
           ) : isError ? (
             // 에러 상태 표시
             <div className="bg-gray-800 rounded-xl p-4 text-center">
@@ -116,10 +103,9 @@ const CommunityPage: React.FC = () => {
               </div>
               <h3 className="text-white font-medium mb-1 text-sm">데이터를 불러올 수 없습니다</h3>
               <p className="text-gray-400 text-xs mb-3">네트워크 연결을 확인하고 다시 시도해주세요.</p>
-              <button 
+              <button
                 onClick={() => window.location.reload()}
-                className="bg-green-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-green-600 transition-colors"
-              >
+                className="bg-green-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-green-600 transition-colors">
                 다시 시도
               </button>
             </div>
@@ -145,20 +131,17 @@ const CommunityPage: React.FC = () => {
             </div>
           ) : (
             // 실제 리뷰 목록 표시
-            allReviews.map((review) => (
-              <ReviewCard key={review.id} review={review} onLike={handleLike} />
-            ))
+            allReviews.map((review) => <ReviewCard key={review.id} review={review} onLike={handleLike} />)
           )}
         </div>
 
         {/* Load More Button */}
         {hasNextPage && !isLoading && (
           <div className="px-4 py-4 text-center">
-            <button 
+            <button
               onClick={handleLoadMore}
               disabled={isFetchingNextPage}
-              className="text-green-400 font-medium hover:text-green-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-            >
+              className="text-green-400 font-medium hover:text-green-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm">
               {isFetchingNextPage ? '로딩 중...' : '더 많은 후기 보기'}
             </button>
           </div>

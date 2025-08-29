@@ -17,6 +17,18 @@ export const publicRoutes: RouteObject[] = [
   {
     path: '/signup',
     element: <lazyRoutes.SignUpPage />,
+  },
+  {
+    path: '/routeinfo',
+    element: <lazyRoutes.RouteInfoPage />,
+  },
+  {
+    path: '/navigate',
+    element: <lazyRoutes.NavigatePage />,
+  },
+  {
+    path: '/feedback',
+    element: <lazyRoutes.FeedbackPage />,
   }
 ];
 
@@ -52,10 +64,6 @@ export const protectedRoutes: RouteObject[] = [
       {
         path: '/myinfo',
         element: <lazyRoutes.MyInfoPage />,
-      },
-      {
-        path: '/navigate',
-        element: <lazyRoutes.NavigatePage />,
       },
       {
         path: '/review',

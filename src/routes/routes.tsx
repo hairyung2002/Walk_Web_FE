@@ -14,4 +14,6 @@ export const lazyRoutes = {
   NavigatePage: React.lazy(() => import('../pages/NavigatePage/NavigatePage')),
   ReviewWritePage: React.lazy(() => import('../pages/CommunityPage/ReviewWritePage')),
   MyInfoPage: React.lazy(() => import('../pages/MyPage/components/MyInfo')),
+  RouteInfoPage: React.lazy(() => import('../pages/NavigatePage/RouteInfo')),
+  FeedbackPage: React.lazy(() => import('../pages/FeedbackPage/FeedbackPage')),
 };

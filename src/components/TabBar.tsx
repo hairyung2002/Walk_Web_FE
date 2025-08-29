@@ -94,17 +94,17 @@ const TabBar: React.FC<TabBarProps> = ({ onTabChange }) => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 z-50">
-      <div className="flex items-center justify-around py-1.5 sm:py-2 px-2 sm:px-4 max-w-sm sm:max-w-md mx-auto">
+      <div className="flex items-center justify-around py-1 sm:py-1.5 px-2 sm:px-4 max-w-sm sm:max-w-md mx-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => handleTabClick(tab)}
-            className={`flex flex-col items-center justify-center py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg transition-all duration-200 ${
+            className={`flex flex-col items-center justify-center py-1 sm:py-1.5 px-2 sm:px-3 rounded-lg transition-all duration-200 ${
               currentActiveTab === tab.id
                 ? 'text-green-400 bg-gray-700'
                 : 'text-gray-400 hover:text-green-400 hover:bg-gray-700'
             }`}>
-            <div className="mb-0.5 sm:mb-1">{tab.icon}</div>
+            <div className="mb-0.5">{tab.icon}</div>
             <span className="text-xs font-medium">{tab.label}</span>
           </button>
         ))}

@@ -4,10 +4,9 @@ import Navbar from '../../components/Navbar';
 import TabBar from '../../components/TabBar';
 import ReviewModal from '../../components/ReviewModal';
 import FilterTabs from './components/FilterTabs';
-import AchievementSection from './components/AchievementSection';
 import EmptyState from './components/EmptyState';
 import { useGetMyRoutes, useGetFavoriteRoutes } from '../../hooks/queries/MainPage/useGetMyRoute';
-import { useToggleMyRouteFavorite } from '../../hooks/mutations/MainPage/useToggleMyRouteFavorite';
+import { useToggleMyRouteFavorite } from '../../hooks/mutation/MainPage/useToggleMyRouteFavorite';
 import type { MyRoute } from '../../types/myRoute';
 
 interface SavedRoute {
@@ -23,18 +22,6 @@ interface SavedRoute {
   rating: number;
   image: string;
   difficulty: string;
-}
-
-interface Achievement {
-  id: string;
-  emoji: string;
-  title: string;
-  description: string;
-  completed: boolean;
-  progress?: {
-    current: number;
-    total: number;
-  };
 }
 
 const MyRoutesPage: React.FC = () => {
@@ -66,34 +53,6 @@ const MyRoutesPage: React.FC = () => {
 
   // API 데이터를 변환하여 사용
   const savedRoutes: SavedRoute[] = myRoutes.map(convertMyRouteToSavedRoute);
-
-  const achievements: Achievement[] = [
-    {
-      id: '1',
-      emoji: '🌟',
-      title: '첫 산책 완주',
-      description: '첫 번째 경로를 완주했어요',
-      completed: true,
-    },
-    {
-      id: '2',
-      emoji: '🔥',
-      title: '7일 연속 산책',
-      description: '꾸준히 걷고 있어요',
-      completed: true,
-    },
-    {
-      id: '3',
-      emoji: '📍',
-      title: '장소 탐험가',
-      description: '10곳 이상 방문하기',
-      completed: false,
-      progress: {
-        current: 7,
-        total: 10,
-      },
-    },
-  ];
 
   const filterOptions = [
     { id: 'recent', label: '최근 순' },
@@ -321,9 +280,6 @@ const MyRoutesPage: React.FC = () => {
             buttonAction={() => navigate('/')}
           />
         )}
-
-        {/* Achievement Section */}
-        {filteredRoutes.length > 0 && <AchievementSection achievements={achievements} />}
 
         {/* Bottom Spacing */}
         <div className="h-6"></div>

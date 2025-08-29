@@ -51,6 +51,13 @@ const MainPage = () => {
     }
   }, [weatherData]);
 
+  // 런닝 목적 선택 시 시간 옵션 제한
+  useEffect(() => {
+    if (walkPurpose === 'RUN' && (walkTime === 'MIN_45' || walkTime === 'MIN_60')) {
+      setWalkTime('MIN_30');
+    }
+  }, [walkPurpose, walkTime]);
+
   // 날씨 관리
   const weatherInfo = {
     temp: weatherData?.temperature || 0,
@@ -73,6 +80,14 @@ const MainPage = () => {
     { value: 'MIN_45', label: '45분' },
     { value: 'MIN_60', label: '1시간' },
   ];
+
+  // 런닝 목적일 때는 15분, 30분만 선택 가능
+  const getAvailableTimeOptions = () => {
+    if (walkPurpose === 'RUN') {
+      return timeOptions.filter((option) => option.value === 'MIN_15' || option.value === 'MIN_30');
+    }
+    return timeOptions;
+  };
 
   // 현재 위치 가져오기 함수 (브라우저 GPS + 백엔드 주소 변환)
   const handleGetCurrentLocation = async () => {
@@ -170,7 +185,7 @@ const MainPage = () => {
           // API response 구조
           const { routeStartX, routeStartY, points } = data;
 
-          navigate('/navigate', {
+          navigate('/routeinfo', {
             state: {
               startX: routeStartX,
               startY: routeStartY,
@@ -279,7 +294,7 @@ const MainPage = () => {
           <div className="mb-4 sm:mb-6">
             <label className="block text-white font-medium mb-2 sm:mb-3 text-sm sm:text-base">⏰ 산책 시간</label>
             <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
-              {timeOptions.map((option) => (
+              {getAvailableTimeOptions().map((option) => (
                 <button
                   key={option.value}
                   onClick={() => setWalkTime(option.value)}

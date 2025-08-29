@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import TabBar from '../../components/TabBar';
 import MyInfo from './components/MyInfo';
+import AchievementSection from '../MainPage/components/AchievementSection';
 
 interface MyPageData {
   user: {
@@ -16,12 +17,24 @@ interface MyPageData {
   };
 }
 
+interface Achievement {
+  id: string;
+  emoji: string;
+  title: string;
+  description: string;
+  completed: boolean;
+  progress?: {
+    current: number;
+    total: number;
+  };
+}
+
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
   const [userData] = useState<MyPageData>({
     user: {
-      nickname: '산책러버',
-      email: 'user@example.com',
+      nickname: '닉네임',
+      email: '',
     },
     stats: {
       totalRoutes: 12,
@@ -60,6 +73,34 @@ const MyPage: React.FC = () => {
       icon: '👍',
       color: 'from-green-500 to-emerald-500',
       onClick: () => navigate('/liked-reviews'),
+    },
+  ];
+
+  const achievements: Achievement[] = [
+    {
+      id: '1',
+      emoji: '🌟',
+      title: '첫 산책 완주',
+      description: '첫 번째 경로를 완주했어요',
+      completed: true,
+    },
+    {
+      id: '2',
+      emoji: '🔥',
+      title: '7일 연속 산책',
+      description: '꾸준히 걷고 있어요',
+      completed: true,
+    },
+    {
+      id: '3',
+      emoji: '📍',
+      title: '장소 탐험가',
+      description: '10곳 이상 방문하기',
+      completed: false,
+      progress: {
+        current: 7,
+        total: 10,
+      },
     },
   ];
 
@@ -136,6 +177,9 @@ const MyPage: React.FC = () => {
               </button>
             ))}
           </div>
+
+          {/* Achievement Section */}
+          {userData.stats.totalRoutes > 0 && <AchievementSection achievements={achievements} />}
 
           {/* 로그아웃 버튼 */}
           <button
