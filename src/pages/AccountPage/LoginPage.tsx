@@ -108,6 +108,15 @@ const LoginPage = () => {
                 회원가입
               </button>
             </p>
+
+            <p className="text-xs sm:text-sm text-gray-400">
+              비회원으로{' '}
+              <button
+                onClick={() => navigate('/signup')}
+                className="font-medium text-green-900 hover:text-green-1000 transition-colors duration-200">
+                계속하기
+              </button>
+            </p>
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import TabBar from '../../components/TabBar';
 import useGetWeather from '@/hooks/query/Mainpage/useGetWheatehr';
 import useGetAddress from '@/hooks/query/Mainpage/useGetAddress';
 import usePostRoute from '@/hooks/mutation/MainPage/usePostRoute';
+import { axiosInstance } from '@/apis/axios';
 
 const MainPage = () => {
   // 기본 상태 관리
@@ -39,10 +40,10 @@ const MainPage = () => {
     } else if (weatherData && weatherData.temperature < -10.0) {
       setWeatherMention('날씨가 매우 추워요! 따뜻한 옷차림과 외출 시 주의하세요.');
       setWeatherColor('Blue');
-    } else if (weatherData && weatherData.precipitationType === 'rain') {
+    } else if (weatherData && weatherData.precipitationType === '비') {
       setWeatherMention('비가 오고 있어요! 우산을 챙기세요.');
       setWeatherColor('Gray');
-    } else if (weatherData && weatherData.precipitationType === 'snow') {
+    } else if (weatherData && weatherData.precipitationType === '눈') {
       setWeatherMention('눈이 오고 있어요! 따뜻한 옷차림과 안전에 유의하세요.');
       setWeatherColor('White');
     } else if (weatherData) {
@@ -177,10 +178,10 @@ const MainPage = () => {
         purpose: walkPurpose,
         addressJibun: location,
         withPet,
-        // longitude: currentCoords?.longitude || 0,
-        // latitude: currentCoords?.latitude || 0,
-        longitude: 127.0395,
-        latitude: 37.5741,
+        longitude: currentCoords?.longitude || 0,
+        latitude: currentCoords?.latitude || 0,
+        // longitude: 127.0395,
+        // latitude: 37.5741,
       },
       {
         onSuccess: (data) => {
@@ -197,6 +198,56 @@ const MainPage = () => {
         },
       },
     );
+  };
+
+  // 주소 검색 기능
+  const handleSearchCurrentLocation = async () => {
+    if (!location.trim()) {
+      setLocationError('주소를 입력해주세요.');
+      return;
+    }
+
+    setIsLocationLoading(true);
+    setLocationError(null);
+
+    try {
+      const response = await axiosInstance.get('/walk/location/search', {
+        params: {
+          address: location.trim(),
+        },
+      });
+
+      if (response.data && response.data.latitude && response.data.longitude) {
+        const { latitude, longitude } = response.data;
+
+        // 좌표 상태 업데이트
+        setCurrentCoords({ latitude, longitude });
+
+        console.log('🔍 주소 검색 성공:', {
+          address: location,
+          coordinates: { latitude, longitude },
+        });
+
+        // 성공 메시지 (선택사항)
+        setLocationError(null);
+      } else {
+        throw new Error('좌표 정보를 받지 못했습니다.');
+      }
+    } catch (error: unknown) {
+      console.error('주소 검색 실패:', error);
+
+      const axiosError = error as { response?: { status?: number } };
+
+      if (axiosError.response?.status === 404) {
+        setLocationError('주소를 찾을 수 없습니다. 다시 확인해주세요.');
+      } else if (axiosError.response?.status === 400) {
+        setLocationError('올바른 주소 형식이 아닙니다.');
+      } else {
+        setLocationError('주소 검색 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
+    } finally {
+      setIsLocationLoading(false);
+    }
   };
 
   return (
@@ -262,10 +313,35 @@ const MainPage = () => {
               <input
                 type="text"
                 placeholder="현재 위치 또는 출발지를 입력하세요"
-                className="w-full px-3 py-3 sm:px-4 sm:py-4 bg-gray-800 border border-gray-700 rounded-xl sm:rounded-2xl text-white placeholder-gray-500 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all text-sm sm:text-base"
+                className="w-full px-3 py-3 sm:px-4 sm:py-4 pr-20 sm:pr-24 bg-gray-800 border border-gray-700 rounded-xl sm:rounded-2xl text-white placeholder-gray-500 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all text-sm sm:text-base"
                 value={location}
                 onChange={(e) => handleAddressInputChange(e.target.value)}
               />
+
+              {/* 주소 검색 버튼 */}
+              <button
+                title="주소로 위치 검색"
+                aria-label="주소로 위치 검색"
+                disabled={isLocationLoading}
+                className={`absolute right-12 sm:right-14 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-1.5 sm:p-2 rounded-lg sm:rounded-xl transition-all ${
+                  isLocationLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
+                }`}
+                onClick={handleSearchCurrentLocation}>
+                {isLocationLoading ? (
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                )}
+              </button>
+
+              {/* GPS 현재 위치 버튼 */}
               <button
                 title="현재 위치 가져오기"
                 aria-label="현재 위치 가져오기"
