@@ -1,7 +1,8 @@
 import fetch from "node-fetch";
 
 export default async function handler(req, res) {
-  const BACKEND_URL = { VITE_SERVER_API_URL: process.env.VITE_SERVER_API_URL };
+  const BACKEND_URL = process.env.VITE_SERVER_API_URL || "http://52.3.42.186";
+  
   try {
     // 클라이언트가 요청한 path
     const path = req.query.path || ""; // 예: /users
