@@ -17,11 +17,7 @@ export const publicRoutes: RouteObject[] = [
   {
     path: '/signup',
     element: <lazyRoutes.SignUpPage />,
-  },
-  {
-    path: '/tmap-test',
-    element: <lazyRoutes.TmapTest />,
-  },
+  }
 ];
 
 export const protectedRoutes: RouteObject[] = [
@@ -50,13 +46,21 @@ export const protectedRoutes: RouteObject[] = [
         element: <lazyRoutes.ProfilePage />,
       },
       {
-        path: '/my-info',
+        path: '/mypage',
+        element: <lazyRoutes.MyPage />,
+      },
+      {
+        path: '/myinfo',
         element: <lazyRoutes.MyInfoPage />,
       },
       {
         path: '/navigate',
         element: <lazyRoutes.NavigatePage />,
-      }
+      },
+      {
+        path: '/review',
+        element: <lazyRoutes.ReviewWritePage />,
+      },
     ],
   },
 ];

@@ -25,13 +25,20 @@ export const useLogin = (): UseLoginReturn => {
     try {
       const response = await loginApi(loginData);
       
+      // LoginResponse를 User 타입으로 변환
+      const user: User = {
+        id: response.id,
+        nickname: response.nickname,
+        age: 0, // API에서 제공하지 않는 경우 기본값
+        gender: 'male', // API에서 제공하지 않는 경우 기본값
+      };
+      
       // 로그인 성공 시 사용자 정보 저장
-      setUser(response);
+      setUser(user);
       setIsSuccess(true);
       
-      // 로컬 스토리지에 사용자 정보 저장
-      saveUser(response);
-      
+      // 로컬 스토리지에 사용자 정보 저장 (세션은 쿠키로 자동 관리)
+      saveUser(user);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '로그인에 실패했습니다.';
       setError(errorMessage);

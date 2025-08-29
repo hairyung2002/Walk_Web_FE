@@ -25,5 +25,8 @@ export default defineConfig({
   server: {
     port: 5175,
     host: true,
+    proxy: {
+      '/walk': 'http://52.3.42.186',
+    }
   },
 });

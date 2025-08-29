@@ -26,21 +26,6 @@ const TabBar: React.FC<TabBarProps> = ({ onTabChange }) => {
       ),
     },
     {
-      id: 'search',
-      label: '산책로 찾기',
-      path: '/route-search',
-      icon: (
-        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-          />
-        </svg>
-      ),
-    },
-    {
       id: 'routes',
       label: '내 경로',
       path: '/my-routes',
@@ -70,12 +55,27 @@ const TabBar: React.FC<TabBarProps> = ({ onTabChange }) => {
         </svg>
       ),
     },
+    {
+      id: 'mypage',
+      label: '마이페이지',
+      path: '/mypage',
+      icon: (
+        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+          />
+        </svg>
+      ),
+    },
   ];
 
   // 현재 경로에 따라 활성 탭 결정
   const getCurrentTab = () => {
     const currentPath = location.pathname;
-    const currentTab = tabs.find(tab => tab.path === currentPath);
+    const currentTab = tabs.find((tab) => tab.path === currentPath);
     return currentTab ? currentTab.id : 'home';
   };
 

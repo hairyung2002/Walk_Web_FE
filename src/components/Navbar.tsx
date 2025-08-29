@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogoIcon, NotificationIcon } from './icons';
-import { logout, getUser } from '../utils/auth';
+import { logout } from '../utils/auth';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const user = getUser();
 
   const handleLogout = () => {
     logout();

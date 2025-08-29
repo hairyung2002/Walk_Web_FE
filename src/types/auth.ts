@@ -7,9 +7,9 @@ export interface LoginRequest {
 // 로그인 응답 타입 (API 명세서 기준)
 export interface LoginResponse {
   id: number;
+  email: string;
   nickname: string;
-  age: number;
-  gender: 'male' | 'female';
+  sessionId: string;
 }
 
 // 회원가입 요청 타입

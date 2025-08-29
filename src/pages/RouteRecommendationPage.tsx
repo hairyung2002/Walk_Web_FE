@@ -234,10 +234,6 @@ const RouteRecommendationPage = () => {
                   <p className="text-gray-400">거리</p>
                   <p className="text-white font-medium">{route.distance}</p>
                 </div>
-                <div className="text-center">
-                  <p className="text-gray-400">난이도</p>
-                  <p className="text-green-400 font-medium">{route.difficulty}</p>
-                </div>
               </div>
 
               <div className="mb-3">

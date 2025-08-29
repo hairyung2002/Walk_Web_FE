@@ -1,0 +1,65 @@
+.navigate-page {
+  padding: 20px;
+}
+
+.location-status {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #e8f5e8;
+  border-radius: 5px;
+  border: 1px solid #c3e6c3;
+}
+
+.current-location {
+  color: #2d5a2d;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.location-loading {
+  color: #666;
+  font-style: italic;
+  font-size: 14px;
+}
+
+.location-error {
+  color: #d32f2f;
+  font-weight: 500;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.map-container {
+  height: 500px !important;
+  width: 100% !important;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.route-info {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.route-points {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Leaflet 기본 스타일 오버라이드 */
+.leaflet-container {
+  height: 500px !important;
+  width: 100% !important;
+}
+
+/* 마커 팝업 스타일 */
+.leaflet-popup-content {
+  font-size: 14px;
+  font-weight: 500;
+}

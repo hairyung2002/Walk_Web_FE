@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import TabBar from '../../components/TabBar';
-import { isLoggedIn } from '../../utils/auth';
 import useGetWeather from '@/hooks/query/Mainpage/useGetWheatehr';
 import useGetAddress from '@/hooks/query/Mainpage/useGetAddress';
+import usePostRoute from '@/hooks/mutation/MainPage/usePostRoute';
 
 const MainPage = () => {
   // 기본 상태 관리
@@ -23,11 +23,7 @@ const MainPage = () => {
   const { data: weatherData } = useGetWeather();
 
   // 백엔드에서 주소 가져오기 (좌표 기반)
-  const {
-    data: addressData,
-    isLoading: isAddressLoading,
-    error: addressError,
-  } = useGetAddress({
+  const { data: addressData } = useGetAddress({
     latitude: currentCoords?.latitude,
     longitude: currentCoords?.longitude,
     enabled: !!currentCoords,
@@ -65,17 +61,17 @@ const MainPage = () => {
 
   // 추천 경로 타입
   const walkPurposes = [
-    { id: 'urban', label: '도심 산책', icon: '🏙️', desc: '음식점, 카페가 많은 활기찬 코스' },
-    { id: 'peaceful', label: '조용한 산책', icon: '🌿', desc: '수목이 많고 한적한 힐링 코스' },
-    { id: 'night', label: '야경 산책', icon: '🌃', desc: '아름다운 야경을 감상할 수 있는 코스' },
-    { id: 'scenic', label: '경치 좋은 길', icon: '📸', desc: '사진 찍기 좋은 명소 코스' },
+    { id: 'CITY', label: '도심 산책', icon: '🏙️', desc: '음식점, 카페가 많은 활기찬 코스' },
+    { id: 'QUIET', label: '조용한 산책', icon: '🌿', desc: '수목이 많고 한적한 힐링 코스' },
+    { id: 'RUN', label: '런닝', icon: '🌃', desc: '다이어터를 위한 런닝 코스' },
+    { id: 'NIGHT_VIEW', label: '경치 좋은 길', icon: '📸', desc: '사진 찍기 좋은 명소 코스' },
   ];
 
   const timeOptions = [
-    { value: '15', label: '15분' },
-    { value: '30', label: '30분' },
-    { value: '45', label: '45분' },
-    { value: '60', label: '1시간' },
+    { value: 'MIN_15', label: '15분' },
+    { value: 'MIN_30', label: '30분' },
+    { value: 'MIN_45', label: '45분' },
+    { value: 'MIN_60', label: '1시간' },
   ];
 
   // 현재 위치 가져오기 함수 (브라우저 GPS + 백엔드 주소 변환)
@@ -126,35 +122,64 @@ const MainPage = () => {
     }
   }, [addressData, currentCoords]);
 
-  const handleRouteRecommendation = () => {
-    // 로그인 체크
-    if (!isLoggedIn()) {
-      navigate('/login');
-      return;
-    }
+  // const handleRouteRecommendation = () => {
+  //   // 로그인 체크
+  //   if (!isLoggedIn()) {
+  //     navigate('/login');
+  //     return;
+  //   }
 
-    if (!location || !walkPurpose) {
-      alert('출발지와 산책 목적을 선택해주세요!');
-      return;
-    }
+  //   if (!location || !walkPurpose) {
+  //     alert('출발지와 산책 목적을 선택해주세요!');
+  //     return;
+  //   }
 
-    // 주소 유형 결정 (GPS 기반인지 사용자 입력인지)
-    const addressType = currentCoords ? 'gps' : 'manual';
+  //   // 주소 유형 결정 (GPS 기반인지 사용자 입력인지)
+  //   const addressType = currentCoords ? 'gps' : 'manual';
 
-    navigate('/route-recommendation', {
-      state: {
-        location,
-        walkTime,
-        walkPurpose,
+  //   navigate('/route-recommendation', {
+  //     state: {
+  //       location,
+  //       walkTime,
+  //       walkPurpose,
+  //       withPet,
+  //       addressInfo: {
+  //         address: location,
+  //         coordinates: currentCoords,
+  //         addressType,
+  //         backendAddressData: addressData,
+  //       },
+  //     },
+  //   });
+  // };
+
+  const postRouteMutation = usePostRoute();
+
+  const handleSubmitAIRequest = () => {
+    postRouteMutation.mutate(
+      {
+        duration: walkTime,
+        purpose: walkPurpose,
+        addressJibun: location,
         withPet,
-        addressInfo: {
-          address: location,
-          coordinates: currentCoords,
-          addressType,
-          backendAddressData: addressData,
+        longitude: currentCoords?.longitude || 0,
+        latitude: currentCoords?.latitude || 0,
+      },
+      {
+        onSuccess: (data) => {
+          // API response 구조
+          const { routeStartX, routeStartY, points } = data;
+
+          navigate('/navigate', {
+            state: {
+              startX: routeStartX,
+              startY: routeStartY,
+              points,
+            },
+          });
         },
       },
-    });
+    );
   };
 
   return (
@@ -311,7 +336,7 @@ const MainPage = () => {
 
           {/* Recommendation Button */}
           <button
-            onClick={handleRouteRecommendation}
+            onClick={handleSubmitAIRequest}
             className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg hover:shadow-lg transition-all mb-4 sm:mb-6">
             🚀 AI 맞춤 경로 추천받기
           </button>
