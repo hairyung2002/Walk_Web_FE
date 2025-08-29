@@ -3,7 +3,7 @@ import type { MyRoute, MyRouteDetailParams } from '@/types/myRoute';
 
 // 내 루트 목록 조회
 export const getMyRoutes = async (): Promise<MyRoute[]> => {
-  const response = await fetch(`/walk/my-routes`, {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/walk/my-routes`, {
     method: 'GET',
     credentials: 'include',
     headers: {

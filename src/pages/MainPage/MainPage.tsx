@@ -178,10 +178,10 @@ const MainPage = () => {
         purpose: walkPurpose,
         addressJibun: location,
         withPet,
-        longitude: currentCoords?.longitude || 0,
-        latitude: currentCoords?.latitude || 0,
-        // longitude: 127.0395,
-        // latitude: 37.5741,
+        // longitude: currentCoords?.longitude || 0,
+        // latitude: currentCoords?.latitude || 0,
+        longitude: 127.0395,
+        latitude: 37.5741,
       },
       {
         onSuccess: (data) => {
