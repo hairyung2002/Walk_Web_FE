@@ -210,14 +210,10 @@ const MyRoutesPage: React.FC = () => {
                   </div>
 
                   {/* Stats Grid */}
-                  <div className="grid grid-cols-4 gap-4 mb-4">
+                  <div className="grid grid-cols-3 gap-4 mb-4">
                     <div className="text-center">
                       <p className="text-gray-400 text-xs mb-1">거리</p>
                       <p className="text-white font-semibold text-sm">{route.distance}</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-gray-400 text-xs mb-1">시간</p>
-                      <p className="text-white font-semibold text-sm">{route.duration}</p>
                     </div>
                     <div className="text-center">
                       <p className="text-gray-400 text-xs mb-1">횟수</p>

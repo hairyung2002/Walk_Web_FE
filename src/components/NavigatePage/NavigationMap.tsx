@@ -1,5 +1,6 @@
-import { MapContainer, TileLayer, Marker, Polyline, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Polyline, Popup, useMap } from 'react-leaflet';
 import { createNumberIcon, currentLocationIcon, startEndIcon } from './MapIcons';
+import { useEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
 
 // 타입 정의
@@ -16,7 +17,60 @@ interface NavigationMapProps {
   waypoints: LatLng[];
   routePoints?: LatLng[];
   className?: string;
+  onLocationCenter?: () => void;
 }
+
+// 지도 중심 이동을 위한 컴포넌트
+const MapCenterController = ({ center }: { center: LatLng }) => {
+  const map = useMap();
+  
+  useEffect(() => {
+    map.setView([center.lat, center.lng], map.getZoom());
+  }, [center, map]);
+  
+  return null;
+};
+
+// 현재 위치 버튼 컴포넌트
+const LocationButton = ({
+  currentLocation,
+  onLocationCenter,
+}: {
+  currentLocation?: LatLng | null;
+  onLocationCenter?: () => void;
+}) => {
+  const map = useMap();
+
+  const handleLocationClick = () => {
+    if (currentLocation) {
+      map.setView([currentLocation.lat, currentLocation.lng], 17);
+      onLocationCenter?.();
+    }
+  };
+
+  if (!currentLocation) return null;
+
+  return (
+    <div className="leaflet-top leaflet-right">
+      <div className="leaflet-control leaflet-bar">
+        <button
+          onClick={handleLocationClick}
+          className="bg-white hover:bg-gray-50 border border-gray-300 rounded shadow-md p-2 m-1 flex items-center justify-center transition-colors"
+          title="현재 위치로 이동">
+          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const NavigationMap = ({
   center,
@@ -26,10 +80,17 @@ const NavigationMap = ({
   waypoints,
   routePoints,
   className = 'h-[400px] w-full',
+  onLocationCenter,
 }: NavigationMapProps) => {
   return (
     <MapContainer center={center} zoom={17} className={className} key={`${center.lat}-${center.lng}`}>
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      
+      {/* 현재 위치 버튼 */}
+      <LocationButton currentLocation={currentLocation} onLocationCenter={onLocationCenter} />
+      
+      {/* 지도 중심 이동 컨트롤러 */}
+      <MapCenterController center={center} />
 
       {/* 현재 위치 마커 (실시간) */}
       {currentLocation && (

@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Polyline, Popup } from 'react-leaflet';
 import { divIcon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -32,14 +32,39 @@ const RouteInfoPage = () => {
   const { currentLocation } = useLocationTracking();
 
   const start = { lat: startY, lng: startX };
+
+  // 경유지 필터링 함수 - 최대 5개까지만 균등하게 선택
+  const getFilteredWaypoints = (allPoints: RoutePoint[]) => {
+    if (!allPoints || allPoints.length === 0) return [];
+
+    const maxWaypoints = 5;
+    if (allPoints.length <= maxWaypoints) {
+      // 5개 이하면 모두 표시
+      return allPoints.map((point: RoutePoint) => ({ lat: point.pointY, lng: point.pointX }));
+    }
+
+    // 5개보다 많으면 균등하게 분배해서 5개 선택
+    const filteredPoints: RoutePoint[] = [];
+    const step = (allPoints.length - 1) / (maxWaypoints - 1);
+
+    for (let i = 0; i < maxWaypoints; i++) {
+      const index = i === maxWaypoints - 1 ? allPoints.length - 1 : Math.round(i * step);
+      filteredPoints.push(allPoints[index]);
+    }
+
+    return filteredPoints.map((point: RoutePoint) => ({ lat: point.pointY, lng: point.pointX }));
+  };
+
   // 출발지, 경유지, 도착지 설정 (훅에서 관리되는 값들)
-  const waypoints = (points || []).map((point: RoutePoint) => ({ lat: point.pointY, lng: point.pointX }));
+  const waypoints = getFilteredWaypoints(points || []);
+  const allWaypoints = points.map((point) => ({ lat: point.pointY, lng: point.pointX }));
+
   const end = { lat: startY, lng: startX }; // 출발지와 같은 위치로 복귀
 
   const { routePoints, totalInfo, isLoading } = useRouteNavigation({
     start,
     end,
-    waypoints,
+    waypoints: allWaypoints,
   });
 
   // 커스텀 마커 아이콘 생성 함수
@@ -102,11 +127,13 @@ const RouteInfoPage = () => {
     iconAnchor: [14, 14],
   });
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleStartNavigation = () => {
-    navigate('/navigate', { state: { startX, startY, points } });
-  }
+    window.location.href = `/navigate?startX=${startX}&startY=${startY}&points=${encodeURIComponent(
+      JSON.stringify(points)
+    )}`;
+  };
 
   return (
     <>
@@ -158,6 +185,11 @@ const RouteInfoPage = () => {
               <p className="text-gray-300 text-xs sm:text-sm">{isLoading ? '경로 검색 중...' : totalInfo}</p>
               {routePoints && routePoints.length > 0 && (
                 <p className="text-green-400 text-xs mt-1">경로 포인트: {routePoints.length}개</p>
+              )}
+              {points && points.length > 0 && (
+                <p className="text-blue-400 text-xs mt-1">
+                  경유지: {waypoints.length}개 표시 {points.length > 5 ? `(전체 ${points.length}개 중)` : ''}
+                </p>
               )}
             </div>
           </div>

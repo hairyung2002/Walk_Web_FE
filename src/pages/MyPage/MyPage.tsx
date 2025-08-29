@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import TabBar from '../../components/TabBar';
-import MyInfo from './components/MyInfo';
 import AchievementSection from '../MainPage/components/AchievementSection';
 
 interface MyPageData {
@@ -33,7 +32,7 @@ const MyPage: React.FC = () => {
   const navigate = useNavigate();
   const [userData] = useState<MyPageData>({
     user: {
-      nickname: '닉네임',
+      nickname: 'test',
       email: '',
     },
     stats: {
@@ -107,69 +106,67 @@ const MyPage: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-900 pb-16 sm:pb-20">
-        <div className="max-w-sm sm:max-w-md mx-auto px-4 pt-16 sm:pt-20 pb-4 sm:pb-6">
+      <div className="min-h-screen bg-gray-900 pb-16">
+        <div className="max-w-[320px] mx-auto px-3 pt-14 pb-4">
           {/* 헤더 */}
-          <div className="text-center mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 leading-tight">
+          <div className="text-center mb-4">
+            <h1 className="text-xl font-bold text-white mb-1 leading-tight">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-600">
                 마이페이지
               </span>
             </h1>
-            <p className="text-gray-400 text-xs sm:text-sm">나만의 산책 기록을 확인해보세요</p>
+            <p className="text-gray-400 text-xs">나만의 산책 기록을 확인해보세요</p>
           </div>
 
-          <MyInfo />
-
           {/* 프로필 카드 */}
-          <div className="rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 bg-gray-800 border border-gray-700">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-r from-green-400 to-green-600 flex items-center justify-center">
-                <span className="text-2xl sm:text-3xl text-white font-bold">{userData.user.nickname.charAt(0)}</span>
+          <div className="rounded-lg p-3 mb-4 bg-gray-800 border border-gray-700">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-800 to-green-900 flex items-center justify-center">
+                <span className="text-lg text-white font-bold">{userData.user.nickname.charAt(0)}</span>
               </div>
               <div className="flex-1">
-                <h2 className="text-lg sm:text-xl font-bold text-white mb-1">{userData.user.nickname}</h2>
-                <p className="text-gray-400 text-sm">{userData.user.email}</p>
+                <h2 className="text-base font-bold text-white mb-0.5">{userData.user.nickname}</h2>
+                <p className="text-gray-400 text-xs">{userData.user.email}</p>
               </div>
             </div>
           </div>
 
           {/* 통계 카드 */}
-          <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
-            <div className="rounded-xl sm:rounded-2xl p-3 sm:p-4 bg-gray-800 border border-gray-700 text-center">
-              <div className="text-lg sm:text-xl font-bold text-white mb-1">{userData.stats.totalRoutes}</div>
-              <div className="text-xs sm:text-sm text-gray-400">찜한 루트</div>
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            <div className="rounded-lg p-2 bg-gray-800 border border-gray-700 text-center">
+              <div className="text-base font-bold text-white mb-0.5">{userData.stats.totalRoutes}</div>
+              <div className="text-xs text-gray-400">찜한 루트</div>
             </div>
-            <div className="rounded-xl sm:rounded-2xl p-3 sm:p-4 bg-gray-800 border border-gray-700 text-center">
-              <div className="text-lg sm:text-xl font-bold text-white mb-1">{userData.stats.totalReviews}</div>
-              <div className="text-xs sm:text-sm text-gray-400">작성 리뷰</div>
+            <div className="rounded-lg p-2 bg-gray-800 border border-gray-700 text-center">
+              <div className="text-base font-bold text-white mb-0.5">{userData.stats.totalReviews}</div>
+              <div className="text-xs text-gray-400">작성 리뷰</div>
             </div>
-            <div className="rounded-xl sm:rounded-2xl p-3 sm:p-4 bg-gray-800 border border-gray-700 text-center">
-              <div className="text-lg sm:text-xl font-bold text-white mb-1">{userData.stats.totalLikes}</div>
-              <div className="text-xs sm:text-sm text-gray-400">좋아요</div>
+            <div className="rounded-lg p-2 bg-gray-800 border border-gray-700 text-center">
+              <div className="text-base font-bold text-white mb-0.5">{userData.stats.totalLikes}</div>
+              <div className="text-xs text-gray-400">좋아요</div>
             </div>
           </div>
 
           {/* 메뉴 항목들 */}
-          <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+          <div className="space-y-2 mb-4">
             {menuItems.map((item, index) => (
               <button
                 key={index}
                 onClick={item.onClick}
-                className="w-full rounded-xl sm:rounded-2xl p-4 sm:p-5 bg-gray-800 border border-gray-700 hover:border-gray-600 transition-all duration-200 group">
-                <div className="flex items-center space-x-4">
+                className="w-full rounded-lg p-3 bg-gray-800 border border-gray-700 hover:border-gray-600 transition-all duration-200 group">
+                <div className="flex items-center space-x-3">
                   <div
-                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-r ${item.color} flex items-center justify-center`}>
-                    <span className="text-xl sm:text-2xl">{item.icon}</span>
+                    className={`w-10 h-10 rounded-lg bg-gradient-to-r ${item.color} flex items-center justify-center`}>
+                    <span className="text-lg">{item.icon}</span>
                   </div>
                   <div className="flex-1 text-left">
-                    <h3 className="text-base sm:text-lg font-semibold text-white mb-1 group-hover:text-green-400 transition-colors">
+                    <h3 className="text-sm font-semibold text-white mb-0.5 group-hover:text-green-400 transition-colors">
                       {item.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-gray-400">{item.description}</p>
+                    <p className="text-xs text-gray-400">{item.description}</p>
                   </div>
                   <div className="text-gray-400 group-hover:text-green-400 transition-colors">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
@@ -181,15 +178,14 @@ const MyPage: React.FC = () => {
           {/* Achievement Section */}
           {userData.stats.totalRoutes > 0 && <AchievementSection achievements={achievements} />}
 
-          {/* 로그아웃 버튼 */}
-          <button
-            onClick={handleLogout}
-            className="w-full rounded-xl sm:rounded-2xl p-4 sm:p-5 bg-red-600 hover:bg-red-700 transition-all duration-200 group">
-            <div className="flex items-center justify-center space-x-3">
-              <span className="text-xl">🚪</span>
-              <span className="text-base sm:text-lg font-semibold text-white">로그아웃</span>
-            </div>
-          </button>
+          {/* 로그아웃 버튼 - 작게 변경 */}
+          <div className="mt-6 pt-4 border-t border-gray-700">
+            <button
+              onClick={handleLogout}
+              className="w-full rounded-lg p-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition-all duration-200 text-center">
+              <span className="text-xs text-gray-400 hover:text-gray-300">로그아웃</span>
+            </button>
+          </div>
         </div>
       </div>
       <TabBar onTabChange={() => {}} />

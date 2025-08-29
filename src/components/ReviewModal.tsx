@@ -21,16 +21,24 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, routeId, rou
   const MAX_CONTENT_LENGTH = 2000;
 
   const availableTags = [
-    '조용한산책', '활기찬', '강변', '도심산책', '자연', '반려동물', 
-    '맛집', '카페', '야경', '힐링', '운동', '사진명소', '데이트', '가족산책'
+    '조용한산책',
+    '활기찬',
+    '강변',
+    '도심산책',
+    '자연',
+    '반려동물',
+    '맛집',
+    '카페',
+    '야경',
+    '힐링',
+    '운동',
+    '사진명소',
+    '데이트',
+    '가족산책',
   ];
 
   const handleTagToggle = (tag: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
-    );
+    setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -66,8 +74,8 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, routeId, rou
         onError: (error) => {
           setError('리뷰 작성에 실패했습니다. 다시 시도해주세요.');
           console.error('리뷰 작성 오류:', error);
-        }
-      }
+        },
+      },
     );
   };
 
@@ -79,10 +87,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, routeId, rou
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
           <h2 className="text-xl font-bold text-white">리뷰 작성</h2>
-          <button
-            onClick={onClose}
-            title="닫기"
-            className="text-gray-400 hover:text-white transition-colors">
+          <button onClick={onClose} title="닫기" className="text-gray-400 hover:text-white transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -106,10 +111,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, routeId, rou
                   key={star}
                   type="button"
                   onClick={() => setRating(star)}
-                  className={`text-2xl transition-colors ${
-                    star <= rating ? 'text-yellow-400' : 'text-gray-500'
-                  }`}
-                >
+                  className={`text-2xl transition-colors ${star <= rating ? 'text-yellow-400' : 'text-gray-500'}`}>
                   ★
                 </button>
               ))}
@@ -119,7 +121,10 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, routeId, rou
           {/* Title */}
           <div>
             <label className="block text-white font-medium mb-2">
-              제목 <span className="text-gray-400 text-sm">({title.length}/{MAX_TITLE_LENGTH})</span>
+              제목{' '}
+              <span className="text-gray-400 text-sm">
+                ({title.length}/{MAX_TITLE_LENGTH})
+              </span>
             </label>
             <input
               type="text"
@@ -134,7 +139,10 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, routeId, rou
           {/* Content */}
           <div>
             <label className="block text-white font-medium mb-2">
-              내용 <span className="text-gray-400 text-sm">({content.length}/{MAX_CONTENT_LENGTH})</span>
+              내용{' '}
+              <span className="text-gray-400 text-sm">
+                ({content.length}/{MAX_CONTENT_LENGTH})
+              </span>
             </label>
             <textarea
               value={content}
@@ -159,8 +167,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, routeId, rou
                     selectedTags.includes(tag)
                       ? 'bg-green-500 text-white'
                       : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  }`}
-                >
+                  }`}>
                   #{tag}
                 </button>
               ))}
@@ -191,15 +198,13 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, routeId, rou
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 bg-gray-700 text-gray-300 rounded-xl hover:bg-gray-600 transition-colors"
-            >
+              className="flex-1 py-3 bg-gray-700 text-gray-300 rounded-xl hover:bg-gray-600 transition-colors">
               취소
             </button>
             <button
               type="submit"
               disabled={postReviewMutation.isPending}
-              className="flex-1 py-3 bg-green-500 text-white rounded-xl hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
+              className="flex-1 py-3 bg-green-500 text-white rounded-xl hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
               {postReviewMutation.isPending ? '작성 중...' : '리뷰 작성'}
             </button>
           </div>
