@@ -18,8 +18,7 @@ export type AIResponseRoute = {
   withPet: boolean;
   routeStartX: number;
   routeStartY: number;
-  routeStartTime: string;
-  routeEndTime: string;
+  cross: number;
   points: Point[];
 };
 
