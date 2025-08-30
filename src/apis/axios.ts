@@ -1,12 +1,14 @@
 import axios from 'axios';
 
 export const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_API_URL,
+  baseURL: import.meta.env.VITE_SERVER_API_URL, // 직접 백엔드 서버로 요청
   headers: {
     'Content-Type': 'application/json',
+    Accept: 'application/json',
+    'X-Requested-With': 'XMLHttpRequest',
   },
   timeout: 30000, // 30초 타임아웃으로 증가
-  withCredentials: true, // 쿠키를 포함하여 요청 전송 (JSESSIONID 포함)
+  withCredentials: false, // CORS 이슈 해결을 위해 임시로 false 설정
   // CORS 관련 설정
   xsrfCookieName: 'XSRF-TOKEN',
   xsrfHeaderName: 'X-XSRF-TOKEN',
@@ -77,16 +79,30 @@ axiosInstance.interceptors.response.use(
   (response) => {
     console.log('✅ API Response:', {
       status: response.status,
+      url: response.config?.url,
       data: response.data,
     });
     return response;
   },
   (error) => {
-    console.error('❌ API Error:', {
+    console.error('❌ API Error Details:', {
       status: error.response?.status,
+      statusText: error.response?.statusText,
+      url: error.config?.url,
       data: error.response?.data,
       message: error.message,
+      headers: error.response?.headers,
     });
+
+    // 403 Forbidden 에러 특별 처리
+    if (error.response?.status === 403) {
+      console.warn('🔒 403 Forbidden - 권한이 없거나 CORS 문제일 수 있습니다.');
+      
+      // 개발환경에서 CORS 문제 해결을 위한 대안 URL 시도 (선택사항)
+      if (import.meta.env.DEV) {
+        console.log('🔄 개발환경에서 대체 요청 시도 가능...');
+      }
+    }
 
     // 401 Unauthorized 에러 처리
     if (error.response?.status === 401) {
