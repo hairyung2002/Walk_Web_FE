@@ -10,7 +10,7 @@ import { axiosInstance } from '@/apis/axios';
 const MainPage = () => {
   // 기본 상태 관리
   const [location, setLocation] = useState('');
-  const [walkTime, setWalkTime] = useState('30');
+  const [walkTime, setWalkTime] = useState('MIN_30');
   const [walkPurpose, setWalkPurpose] = useState('');
   const [withPet, setWithPet] = useState(false);
 
@@ -177,34 +177,52 @@ const MainPage = () => {
       return;
     }
 
-    postRouteMutation.mutate(
-      {
-        duration: walkTime,
-        purpose: walkPurpose,
-        addressJibun: location || '서울특별시 강남구 테헤란로 427',
-        withPet,
-        longitude: 127.0395, // 강남역 고정 좌표
-        latitude: 37.5741, // 강남역 고정 좌표
-      },
-      {
-        onSuccess: (data) => {
-          // API response 구조
-          const { routeStartX, routeStartY, points } = data;
+    const requestData = {
+      duration: walkTime,
+      purpose: walkPurpose,
+      addressJibun: location || '서울특별시 강남구 테헤란로 427',
+      withPet,
+      longitude: 127.0395, // 강남역 고정 좌표
+      latitude: 37.5741, // 강남역 고정 좌표
+    };
 
-          navigate('/routeinfo', {
-            state: {
-              startX: routeStartX,
-              startY: routeStartY,
-              points,
-            },
-          });
-        },
-        onError: (error) => {
-          console.error('AI 경로 추천 실패:', error);
-          setLocationError('경로 추천 중 오류가 발생했습니다. 다시 시도해주세요.');
-        },
+    console.log('🚀 MainPage AI 요청 데이터:', requestData);
+
+    postRouteMutation.mutate(requestData, {
+      onSuccess: (data) => {
+        console.log('✅ MainPage AI 응답 성공:', data);
+        // API response 구조
+        const { routeStartX, routeStartY, points } = data;
+
+        navigate('/routeinfo', {
+          state: {
+            startX: routeStartX,
+            startY: routeStartY,
+            points,
+          },
+        });
       },
-    );
+      onError: (error) => {
+        console.error('❌ MainPage AI 요청 실패:', error);
+        
+        // 에러 타입에 따른 메시지 설정
+        let errorMessage = '경로 추천 중 오류가 발생했습니다. 다시 시도해주세요.';
+        
+        if (error && typeof error === 'object' && 'response' in error) {
+          const axiosError = error as { response?: { status?: number; data?: { message?: string } } };
+          
+          if (axiosError.response?.status === 500) {
+            errorMessage = '서버에서 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+          } else if (axiosError.response?.status === 400) {
+            errorMessage = '입력 정보에 오류가 있습니다. 다시 확인해주세요.';
+          } else if (axiosError.response?.data?.message) {
+            errorMessage = axiosError.response.data.message;
+          }
+        }
+        
+        setLocationError(errorMessage);
+      },
+    });
   };
 
   // 주소 검색 기능
