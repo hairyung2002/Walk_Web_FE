@@ -1,8 +1,8 @@
 import type { Review } from '@/types/review';
-import axios from 'axios';
+import { axiosInstance } from '@/apis/axios';
 
 export const getReview = async (): Promise<Review[]> => {
-  const { data } = await axios.get(`${import.meta.env.VITE_SERVER_API_URL}/walk/reviews`);
+  const { data } = await axiosInstance.get('/walk/reviews');
 
   return data;
 };

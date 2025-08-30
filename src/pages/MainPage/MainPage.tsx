@@ -172,16 +172,19 @@ const MainPage = () => {
   const postRouteMutation = usePostRoute();
 
   const handleSubmitAIRequest = () => {
+    if (!walkPurpose) {
+      setLocationError('산책 목적을 선택해주세요.');
+      return;
+    }
+
     postRouteMutation.mutate(
       {
         duration: walkTime,
         purpose: walkPurpose,
-        addressJibun: location,
+        addressJibun: location || '서울특별시 강남구 테헤란로 427',
         withPet,
-        // longitude: currentCoords?.longitude || 0,
-        // latitude: currentCoords?.latitude || 0,
-        longitude: 127.0395,
-        latitude: 37.5741,
+        longitude: 127.0395, // 강남역 고정 좌표
+        latitude: 37.5741, // 강남역 고정 좌표
       },
       {
         onSuccess: (data) => {
@@ -195,6 +198,10 @@ const MainPage = () => {
               points,
             },
           });
+        },
+        onError: (error) => {
+          console.error('AI 경로 추천 실패:', error);
+          setLocationError('경로 추천 중 오류가 발생했습니다. 다시 시도해주세요.');
         },
       },
     );
@@ -430,8 +437,20 @@ const MainPage = () => {
           {/* Recommendation Button */}
           <button
             onClick={handleSubmitAIRequest}
-            className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg hover:shadow-lg transition-all mb-4 sm:mb-6">
-            🚀 AI 맞춤 경로 추천받기
+            disabled={postRouteMutation.isPending}
+            className={`w-full py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg transition-all mb-4 sm:mb-6 ${
+              postRouteMutation.isPending
+                ? 'bg-gray-600 text-gray-300 cursor-not-allowed'
+                : 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:shadow-lg'
+            }`}>
+            {postRouteMutation.isPending ? (
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>AI가 경로를 분석 중...</span>
+              </div>
+            ) : (
+              '🚀 AI 맞춤 경로 추천받기'
+            )}
           </button>
         </div>
 

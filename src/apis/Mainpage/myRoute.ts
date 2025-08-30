@@ -3,19 +3,8 @@ import type { MyRoute, MyRouteDetailParams } from '@/types/myRoute';
 
 // 내 루트 목록 조회
 export const getMyRoutes = async (): Promise<MyRoute[]> => {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/walk/my-routes`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch my routes');
-  }
-
-  return response.json();
+  const response = await axiosInstance.get('/walk/my-routes');
+  return response.data.data;
 };
 
 // 즐겨찾기 루트 목록 조회

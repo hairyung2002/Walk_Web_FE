@@ -1,5 +1,5 @@
 import type { AIResponseRoute } from '@/types/AIroute';
-import axios from 'axios';
+import { axiosInstance } from '@/apis/axios';
 
 export const postRoute = async (
   duration: string,
@@ -9,7 +9,7 @@ export const postRoute = async (
   longitude: number,
   latitude: number,
 ): Promise<AIResponseRoute> => {
-  const { data } = await axios.post<AIResponseRoute>(`${import.meta.env.VITE_SERVER_API_URL}/walk/ai/request`, {
+  const { data } = await axiosInstance.post<AIResponseRoute>('/walk/ai/request', {
     duration,
     purpose,
     addressJibunm,

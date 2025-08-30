@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { axiosInstance } from '@/apis/axios';
 
 interface LikeReviewRequest {
   reviewId: number;
@@ -8,17 +9,7 @@ interface LikeReviewRequest {
 const likeReview = async (data: LikeReviewRequest): Promise<void> => {
   const endpoint = data.isLike ? `/walk/reviews/${data.reviewId}/like` : `/walk/reviews/${data.reviewId}/hate`;
   
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
+  await axiosInstance.post(endpoint);
 };
 
 export const useLikeReview = () => {

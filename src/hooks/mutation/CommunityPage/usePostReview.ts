@@ -1,22 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { RequestReviewDTO, ResponseReviewDTO } from '@/types/review';
+import { axiosInstance } from '@/apis/axios';
 
 const postReview = async (data: RequestReviewDTO): Promise<ResponseReviewDTO> => {
-  const res = await fetch('/walk/reviews', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include', // JSESSIONID 쿠키 자동 전송
-    body: JSON.stringify(data),
-  });
-
-  if (!res.ok) {
-    const error = await res.json().catch(() => ({}));
-    throw { status: res.status, ...error };
-  }
-
-  return res.json();
+  const response = await axiosInstance.post('/walk/reviews', data);
+  return response.data;
 };
 
 export const usePostReview = () => {

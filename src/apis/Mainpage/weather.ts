@@ -1,8 +1,8 @@
 import type { Weather } from '@/types/weather';
-import axios from 'axios';
+import { axiosInstance } from '@/apis/axios';
 
 export const getWeather = async (): Promise<Weather> => {
-  const { data } = await axios.get(`${import.meta.env.VITE_SERVER_API_URL}/walk`);
+  const { data } = await axiosInstance.get('/walk');
 
   return data;
 };

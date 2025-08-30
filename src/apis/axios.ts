@@ -5,7 +5,7 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000, // 10초 타임아웃
+  timeout: 30000, // 30초 타임아웃으로 증가
   withCredentials: true, // 쿠키를 포함하여 요청 전송 (JSESSIONID 포함)
   // CORS 관련 설정
   xsrfCookieName: 'XSRF-TOKEN',
