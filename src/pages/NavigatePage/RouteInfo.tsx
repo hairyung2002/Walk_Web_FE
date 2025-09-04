@@ -131,7 +131,7 @@ const RouteInfoPage = () => {
 
   const handleStartNavigation = () => {
     window.location.href = `/navigate?startX=${startX}&startY=${startY}&points=${encodeURIComponent(
-      JSON.stringify(points)
+      JSON.stringify(points),
     )}`;
   };
 
