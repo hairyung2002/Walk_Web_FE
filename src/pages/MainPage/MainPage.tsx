@@ -89,8 +89,7 @@ const MainPage = () => {
     }
     return timeOptions;
   };
-
-  // 현재 위치 가져오기 함수 (브라우저 GPS + 백엔드 주소 변환)
+  {/* 현재 위치 가져오기 함수 (브라우저 GPS + 백엔드 주소 변환) 
   const handleGetCurrentLocation = async () => {
     setIsLocationLoading(true);
     setLocationError(null);
@@ -122,6 +121,7 @@ const MainPage = () => {
       setIsLocationLoading(false);
     }
   };
+  */}
 
   // 사용자가 직접 주소를 입력할 때
   const handleAddressInputChange = (value: string) => {
