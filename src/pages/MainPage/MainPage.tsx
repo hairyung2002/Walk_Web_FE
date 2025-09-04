@@ -369,6 +369,7 @@ const MainPage = () => {
               </button>
 
               {/* GPS 현재 위치 버튼 */}
+              {/** 
               <button
                 title="현재 위치 가져오기"
                 aria-label="현재 위치 가져오기"
@@ -390,6 +391,7 @@ const MainPage = () => {
                   </svg>
                 )}
               </button>
+              */}
             </div>
             {/* Location Error Message */}
             {locationError && <p className="mt-2 text-xs sm:text-sm text-red-400">{locationError}</p>}

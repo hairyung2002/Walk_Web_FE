@@ -83,13 +83,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log(`[Proxy] Headers:`, headers);
     console.log(`[Proxy] Body:`, req.body);
     
-    const response = await fetch(targetUrl, fetchOptions);
+    let response;
+    let data;
     
-    const data = await response.text();
-    
-    console.log(`[Proxy] Response: ${response.status} ${response.statusText}`);
-    console.log(`[Proxy] Response headers:`, Object.fromEntries(response.headers.entries()));
-    console.log(`[Proxy] Response data:`, data.substring(0, 500)); // 처음 500자만 로깅
+    try {
+      console.log(`[Proxy] Making fetch request to ${targetUrl}`);
+      response = await fetch(targetUrl, fetchOptions);
+      console.log(`[Proxy] Fetch completed, status: ${response.status}`);
+      
+      data = await response.text();
+      console.log(`[Proxy] Response data read, length: ${data.length}`);
+      
+      console.log(`[Proxy] Response: ${response.status} ${response.statusText}`);
+      console.log(`[Proxy] Response headers:`, Object.fromEntries(response.headers.entries()));
+      console.log(`[Proxy] Response data:`, data.substring(0, 500)); // 처음 500자만 로깅
+    } catch (fetchError) {
+      console.error(`[Proxy] Fetch error:`, fetchError);
+      throw new Error(
+        `Failed to fetch from backend: ${fetchError instanceof Error ? fetchError.message : 'Unknown fetch error'}`,
+      );
+    }
 
     // 응답 헤더 전달
     response.headers.forEach((value, key) => {
