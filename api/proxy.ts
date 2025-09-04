@@ -18,14 +18,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    // URL에서 path 추출 (예: /api/proxy?path=/walk/weather -> /walk/weather)
-    const path = req.query.path as string;
+    // URL에서 path 추출 및 쿼리 파라미터 처리
+    const { path, ...otherParams } = req.query;
     
-    if (!path) {
+    if (!path || typeof path !== 'string') {
       return res.status(400).json({ error: 'Path parameter is required' });
     }
 
-    const targetUrl = `${BACKEND_BASE_URL}${path}`;
+    // 쿼리 파라미터가 있는 경우 URL에 추가
+    let targetUrl = `${BACKEND_BASE_URL}${path}`;
+    
+    if (Object.keys(otherParams).length > 0) {
+      const searchParams = new URLSearchParams();
+      Object.entries(otherParams).forEach(([key, value]) => {
+        if (typeof value === 'string') {
+          searchParams.append(key, value);
+        }
+      });
+      targetUrl += `?${searchParams.toString()}`;
+    }
     
     console.log(`[Proxy] ${req.method} ${targetUrl}`);
 
