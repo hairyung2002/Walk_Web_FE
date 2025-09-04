@@ -36,7 +36,7 @@ export default defineConfig({
           return pathParam || path;
         },
         configure: (proxy, options) => {
-          proxy.on('proxyReq', (proxyReq, req, res) => {
+          proxy.on('proxyReq', (proxyReq, req) => {
             console.log(`[DEV Proxy] ${req.method} ${req.url} -> ${options.target}${proxyReq.path}`);
             
             // 인증 헤더 전달
