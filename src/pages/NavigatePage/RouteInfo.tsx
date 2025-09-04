@@ -57,14 +57,14 @@ const RouteInfoPage = () => {
 
   // 출발지, 경유지, 도착지 설정 (훅에서 관리되는 값들)
   const waypoints = getFilteredWaypoints(points || []);
+  const allWaypoints = points.map((point) => ({ lat: point.pointY, lng: point.pointX }));
 
   const end = { lat: startY, lng: startX }; // 출발지와 같은 위치로 복귀
 
-  // 필터링된 경유지들을 사용해서 실제 경로 탐색
   const { routePoints, totalInfo, isLoading } = useRouteNavigation({
     start,
     end,
-    waypoints: waypoints, // 필터링된 경유지만 사용
+    waypoints: allWaypoints,
   });
 
   // 커스텀 마커 아이콘 생성 함수
@@ -131,7 +131,7 @@ const RouteInfoPage = () => {
 
   const handleStartNavigation = () => {
     window.location.href = `/navigate?startX=${startX}&startY=${startY}&points=${encodeURIComponent(
-      JSON.stringify(points),
+      JSON.stringify(points)
     )}`;
   };
 
