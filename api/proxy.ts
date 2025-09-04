@@ -78,11 +78,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // 백엔드로 요청 전달
+    console.log(`[Proxy] Sending request to: ${targetUrl}`);
+    console.log(`[Proxy] Method: ${req.method}`);
+    console.log(`[Proxy] Headers:`, headers);
+    console.log(`[Proxy] Body:`, req.body);
+    
     const response = await fetch(targetUrl, fetchOptions);
     
     const data = await response.text();
     
     console.log(`[Proxy] Response: ${response.status} ${response.statusText}`);
+    console.log(`[Proxy] Response headers:`, Object.fromEntries(response.headers.entries()));
+    console.log(`[Proxy] Response data:`, data.substring(0, 500)); // 처음 500자만 로깅
 
     // 응답 헤더 전달
     response.headers.forEach((value, key) => {
