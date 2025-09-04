@@ -28,36 +28,38 @@ const RouteInfoPage = () => {
     points: [],
   };
 
+  // URL 파라미터에서 duration 가져오기
+  const searchParams = new URLSearchParams(location.search);
+  const duration = searchParams.get('duration') || '15';
+
+  // duration에 따른 필터링 개수 결정
+  const getWaypointCount = (duration: string) => {
+    switch (duration) {
+      case '15':
+        return 5;
+      case '30':
+        return 10;
+      case '45':
+        return 15;
+      case '60':
+        return 20;
+      default:
+        return 5;
+    }
+  };
+
+  const maxWaypoints = getWaypointCount(duration);
+
   // 커스텀 훅 사용 (먼저 호출해야 함)
   const { currentLocation } = useLocationTracking();
 
   const start = { lat: startY, lng: startX };
 
-  // 경유지 필터링 함수 - 최대 5개까지만 균등하게 선택
-  const getFilteredWaypoints = (allPoints: RoutePoint[]) => {
-    if (!allPoints || allPoints.length === 0) return [];
-
-    const maxWaypoints = 5;
-    if (allPoints.length <= maxWaypoints) {
-      // 5개 이하면 모두 표시
-      return allPoints.map((point: RoutePoint) => ({ lat: point.pointY, lng: point.pointX }));
-    }
-
-    // 5개보다 많으면 균등하게 분배해서 5개 선택
-    const filteredPoints: RoutePoint[] = [];
-    const step = (allPoints.length - 1) / (maxWaypoints - 1);
-
-    for (let i = 0; i < maxWaypoints; i++) {
-      const index = i === maxWaypoints - 1 ? allPoints.length - 1 : Math.round(i * step);
-      filteredPoints.push(allPoints[index]);
-    }
-
-    return filteredPoints.map((point: RoutePoint) => ({ lat: point.pointY, lng: point.pointX }));
-  };
-
-  // 출발지, 경유지, 도착지 설정 (훅에서 관리되는 값들)
-  const waypoints = getFilteredWaypoints(points || []);
+  // 출발지, 경유지, 도착지 설정 - 모든 포인트 표시
   const allWaypoints = points.map((point) => ({ lat: point.pointY, lng: point.pointX }));
+
+  // duration에 따라 필터링된 경유지
+  const waypoints = allWaypoints.slice(0, maxWaypoints);
 
   const end = { lat: startY, lng: startX }; // 출발지와 같은 위치로 복귀
 
@@ -131,7 +133,7 @@ const RouteInfoPage = () => {
 
   const handleStartNavigation = () => {
     window.location.href = `/navigate?startX=${startX}&startY=${startY}&points=${encodeURIComponent(
-      JSON.stringify(points)
+      JSON.stringify(points),
     )}`;
   };
 
@@ -259,7 +261,36 @@ const RouteInfoPage = () => {
                 </Popup>
               </Marker>
 
-              {/* 경로 라인 */}
+              {/* 필터링된 경유지들을 연결하는 경로 라인 */}
+              {(() => {
+                // 현재 위치(또는 출발지) → 첫 번째 경유지 → ... → 마지막 경유지 → 도착지 순서로 연결
+                const connectingPoints = [
+                  currentLocation || start, // 출발점
+                  ...waypoints, // 필터링된 경유지들
+                  end, // 도착지
+                ];
+
+                return connectingPoints.map((_, idx) => {
+                  if (idx === connectingPoints.length - 1) return null; // 마지막 포인트는 연결할 다음 포인트가 없음
+
+                  const currentPoint = connectingPoints[idx];
+                  const nextPoint = connectingPoints[idx + 1];
+
+                  // 두 점을 직선으로 연결
+                  return (
+                    <Polyline
+                      key={`connection-${idx}`}
+                      positions={[currentPoint, nextPoint]}
+                      color={idx === 0 ? '#3b82f6' : idx === connectingPoints.length - 2 ? '#ef4444' : '#10b981'}
+                      weight={4}
+                      opacity={0.8}
+                      dashArray={idx === 0 || idx === connectingPoints.length - 2 ? '10, 5' : undefined}
+                    />
+                  );
+                });
+              })()}
+
+              {/* 전체 경로 라인 (더 얇고 반투명하게 표시) */}
               {routePoints && routePoints.length > 0 && (
                 <Polyline
                   positions={routePoints.filter(
@@ -270,9 +301,9 @@ const RouteInfoPage = () => {
                       !isNaN(point.lat) &&
                       !isNaN(point.lng),
                   )}
-                  color="#10b981"
-                  weight={5}
-                  opacity={0.8}
+                  color="#6b7280"
+                  weight={2}
+                  opacity={0.4}
                 />
               )}
             </MapContainer>
