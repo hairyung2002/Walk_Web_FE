@@ -25,20 +25,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'Path parameter is required' });
     }
 
+    // 디코딩된 path 사용
+    const decodedPath = decodeURIComponent(path);
+    
     // 쿼리 파라미터가 있는 경우 URL에 추가
-    let targetUrl = `${BACKEND_BASE_URL}${path}`;
+    let targetUrl = `${BACKEND_BASE_URL}${decodedPath}`;
     
     if (Object.keys(otherParams).length > 0) {
       const searchParams = new URLSearchParams();
       Object.entries(otherParams).forEach(([key, value]) => {
         if (typeof value === 'string') {
           searchParams.append(key, value);
+        } else if (Array.isArray(value)) {
+          // 배열인 경우 첫 번째 값 사용
+          searchParams.append(key, value[0]);
         }
       });
       targetUrl += `?${searchParams.toString()}`;
     }
     
-    console.log(`[Proxy] ${req.method} ${targetUrl}`);
+    console.log(`[Proxy] Original query:`, req.query);
+    console.log(`[Proxy] Decoded path:`, decodedPath);
+    console.log(`[Proxy] Other params:`, otherParams);
+    console.log(`[Proxy] Final URL: ${req.method} ${targetUrl}`);
 
     // 요청 헤더 준비
     const headers: Record<string, string> = {
