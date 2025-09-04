@@ -177,21 +177,25 @@ const MainPage = () => {
       return;
     }
 
+    // 위도/경도가 반드시 필요하다면 체크
+    if (!currentCoords || typeof currentCoords.latitude !== 'number' || typeof currentCoords.longitude !== 'number') {
+      setLocationError('정확한 위치 정보를 확인할 수 없습니다. 출발지를 다시 입력하거나 위치를 선택해주세요.');
+      return;
+    }
+
     const requestData = {
       duration: walkTime,
       purpose: walkPurpose,
-      addressJibun: location || '서울특별시 강남구 테헤란로 427',
+      addressJibun: location,
       withPet,
-      longitude: 127.0395, // 강남역 고정 좌표
-      latitude: 37.5741, // 강남역 고정 좌표
+      longitude: currentCoords.longitude,
+      latitude: currentCoords.latitude,
     };
 
     console.log('🚀 MainPage AI 요청 데이터:', requestData);
 
     postRouteMutation.mutate(requestData, {
       onSuccess: (data) => {
-        console.log('✅ MainPage AI 응답 성공:', data);
-        // API response 구조
         const { routeStartX, routeStartY, points } = data;
 
         navigate('/routeinfo', {
@@ -203,14 +207,12 @@ const MainPage = () => {
         });
       },
       onError: (error) => {
-        console.error('❌ MainPage AI 요청 실패:', error);
-        
         // 에러 타입에 따른 메시지 설정
         let errorMessage = '경로 추천 중 오류가 발생했습니다. 다시 시도해주세요.';
-        
+
         if (error && typeof error === 'object' && 'response' in error) {
           const axiosError = error as { response?: { status?: number; data?: { message?: string } } };
-          
+
           if (axiosError.response?.status === 500) {
             errorMessage = '서버에서 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
           } else if (axiosError.response?.status === 400) {
@@ -219,7 +221,7 @@ const MainPage = () => {
             errorMessage = axiosError.response.data.message;
           }
         }
-        
+
         setLocationError(errorMessage);
       },
     });
@@ -238,7 +240,7 @@ const MainPage = () => {
     try {
       const response = await axiosInstance.get('/walk/location/search', {
         params: {
-          address: location.trim(),
+          jibunAddress: location.trim(),
         },
       });
 

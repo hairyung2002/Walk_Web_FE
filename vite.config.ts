@@ -26,7 +26,29 @@ export default defineConfig({
     port: 5175,
     host: true,
     proxy: {
-      '/walk': 'http://52.3.42.186',
+      '/api/proxy': {
+        target: 'http://52.3.42.186',
+        changeOrigin: true,
+        rewrite: (path) => {
+          // /api/proxy?path=/walk/weather -> /walk/weather
+          const url = new URL(path, 'http://localhost');
+          const pathParam = url.searchParams.get('path');
+          return pathParam || path;
+        },
+        configure: (proxy, options) => {
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            console.log(`[DEV Proxy] ${req.method} ${req.url} -> ${options.target}${proxyReq.path}`);
+            
+            // 인증 헤더 전달
+            if (req.headers.jsessionid) {
+              proxyReq.setHeader('JSESSIONID', req.headers.jsessionid);
+            }
+            if (req.headers['x-session-id']) {
+              proxyReq.setHeader('X-Session-ID', req.headers['x-session-id']);
+            }
+          });
+        }
+      }
     }
   },
 });

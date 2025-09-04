@@ -1,22 +1,41 @@
 import axios from 'axios';
 
 export const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_API_URL, // 직접 백엔드 서버로 요청
+  baseURL: '/api/proxy', // Vercel 서버리스 함수 경로
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
   },
   timeout: 30000, // 30초 타임아웃으로 증가
-  withCredentials: false, // CORS 이슈 해결을 위해 임시로 false 설정
+  withCredentials: true, // 쿠키 포함
   // CORS 관련 설정
   xsrfCookieName: 'XSRF-TOKEN',
   xsrfHeaderName: 'X-XSRF-TOKEN',
 });
 
-// 요청 인터셉터 (디버깅용 + 인증 헤더 추가)
+// 요청 인터셉터 (디버깅용 + 인증 헤더 추가 + URL 변환)
 axiosInstance.interceptors.request.use(
   (config) => {
+    // URL을 path 파라미터로 변환 (예: /walk/weather -> ?path=/walk/weather)
+    if (config.url && !config.url.includes('path=')) {
+      const originalUrl = config.url;
+      config.url = `?path=${originalUrl}`;
+      
+      // GET 요청에 다른 파라미터가 있는 경우 처리
+      if (config.params && Object.keys(config.params).length > 0) {
+        const searchParams = new URLSearchParams();
+        searchParams.append('path', originalUrl);
+        
+        Object.keys(config.params).forEach((key) => {
+          searchParams.append(key, config.params[key]);
+        });
+        
+        config.url = `?${searchParams.toString()}`;
+        config.params = undefined; // params를 URL에 포함했으므로 제거
+      }
+    }
+
     // 쿠키 확인
     const cookies = document.cookie;
     const jsessionId = cookies.split(';').find((cookie) => cookie.trim().startsWith('JSESSIONID='));
@@ -31,9 +50,6 @@ axiosInstance.interceptors.request.use(
     // JSESSIONID 쿠키가 있는지 확인
     if (jsessionId) {
       console.log('✅ JSESSIONID 쿠키 발견:', jsessionId);
-      
-      // 브라우저가 Cookie 헤더 설정을 차단하므로 제거
-      // config.headers['Cookie'] = jsessionId; // 제거됨
       
       // 백업으로 다른 헤더에 추가 (일부 서버는 헤더를 선호할 수 있음)
       const sessionIdValue = jsessionId.split('=')[1];

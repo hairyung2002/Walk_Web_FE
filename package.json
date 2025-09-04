@@ -27,6 +27,7 @@
     "@stylelint/postcss-css-in-js": "^0.38.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@vercel/node": "^3.2.29",
     "@vitejs/plugin-react": "^4.5.2",
     "eslint": "^9.29.0",
     "eslint-plugin-prettier": "^5.5.1",
