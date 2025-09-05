@@ -350,7 +350,7 @@ const MainPage = () => {
                 title="주소로 위치 검색"
                 aria-label="주소로 위치 검색"
                 disabled={isLocationLoading}
-                className={`absolute right-12 sm:right-14 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-1.5 sm:p-2 rounded-lg sm:rounded-xl transition-all ${
+                className={`absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-1.5 sm:p-2 rounded-lg sm:rounded-xl transition-all ${
                   isLocationLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
                 }`}
                 onClick={handleSearchCurrentLocation}>
